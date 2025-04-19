@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import PropertyCard from '@/components/properties/PropertyCard';
-import { getProperties, PropertyFilter } from '@/services/propertyService';
+import SearchInput from '@/components/search/SearchInput';
+import AdvancedFilters from '@/components/search/AdvancedFilters';
+import { getProperties, PropertyFilter, Property } from '@/services/propertyService';
 
 // Fallback data for properties
 const fallbackProperties = [
@@ -72,7 +75,8 @@ const fallbackProperties = [
 ];
 
 export default function PropertiesPage() {
-  const [properties, setProperties] = useState<any[]>(fallbackProperties);
+  const searchParams = useSearchParams();
+  const [properties, setProperties] = useState<Property[]>(fallbackProperties as unknown as Property[]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -81,11 +85,14 @@ export default function PropertiesPage() {
   // Filter states
   const [filters, setFilters] = useState<PropertyFilter>({
     page: 1,
-    type: '',
-    location: '',
-    minPrice: undefined,
-    maxPrice: undefined,
-    bedrooms: undefined,
+    type: searchParams.get('type') || '',
+    status: searchParams.get('status') || '',
+    location: searchParams.get('location') || '',
+    minPrice: searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined,
+    maxPrice: searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined,
+    bedrooms: searchParams.get('bedrooms') ? Number(searchParams.get('bedrooms')) : undefined,
+    bathrooms: searchParams.get('bathrooms') ? Number(searchParams.get('bathrooms')) : undefined,
+    keyword: searchParams.get('keyword') || '',
   });
 
   // Fetch properties with current filters
@@ -113,38 +120,21 @@ export default function PropertiesPage() {
   // Initial fetch
   useEffect(() => {
     fetchProperties();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Handle filter changes
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { id, value } = e.target;
+  // Handle search input
+  const handleSearch = (query: string) => {
+    setFilters({ ...filters, keyword: query, page: 1 });
+  };
 
-    switch (id) {
-      case 'location':
-        setFilters({ ...filters, location: value, page: 1 });
-        break;
-      case 'property-type':
-        setFilters({ ...filters, type: value, page: 1 });
-        break;
-      case 'price-range':
-        if (value === '') {
-          setFilters({ ...filters, minPrice: undefined, maxPrice: undefined, page: 1 });
-        } else {
-          const [min, max] = value.split('-').map(Number);
-          setFilters({ ...filters, minPrice: min, maxPrice: max, page: 1 });
-        }
-        break;
-      case 'bedrooms':
-        setFilters({ ...filters, bedrooms: value ? Number(value) : undefined, page: 1 });
-        break;
-      default:
-        break;
-    }
+  // Handle filter changes
+  const handleFilterChange = (newFilters: PropertyFilter) => {
+    setFilters(newFilters);
   };
 
   // Apply filters
-  const applyFilters = (e: FormEvent) => {
-    e.preventDefault();
+  const applyFilters = () => {
     fetchProperties();
   };
 
@@ -164,92 +154,23 @@ export default function PropertiesPage() {
         </p>
       </div>
 
-      {/* Filters */}
-      <form onSubmit={applyFilters} className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label htmlFor="location" className="block text-gray-700 text-sm font-medium mb-2">
-              Location
-            </label>
-            <select
-              id="location"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={filters.location}
-              onChange={handleFilterChange}
-            >
-              <option value="">Any Location</option>
-              <option value="New York">New York</option>
-              <option value="Los Angeles">Los Angeles</option>
-              <option value="Miami">Miami</option>
-              <option value="Chicago">Chicago</option>
-            </select>
-          </div>
+      {/* Search Bar */}
+      <div className="mb-8">
+        <SearchInput
+          placeholder="Search by location, property name, or keywords..."
+          initialValue={filters.keyword || ''}
+          onSearch={handleSearch}
+          className="py-3 text-gray-700 placeholder-gray-500"
+        />
+      </div>
 
-          <div>
-            <label htmlFor="property-type" className="block text-gray-700 text-sm font-medium mb-2">
-              Property Type
-            </label>
-            <select
-              id="property-type"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={filters.type}
-              onChange={handleFilterChange}
-            >
-              <option value="">Any Type</option>
-              <option value="apartment">Apartment</option>
-              <option value="house">House</option>
-              <option value="villa">Villa</option>
-              <option value="penthouse">Penthouse</option>
-              <option value="commercial">Commercial</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="price-range" className="block text-gray-700 text-sm font-medium mb-2">
-              Price Range
-            </label>
-            <select
-              id="price-range"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={handleFilterChange}
-            >
-              <option value="">Any Price</option>
-              <option value="0-500000">$0 - $500,000</option>
-              <option value="500000-1000000">$500,000 - $1,000,000</option>
-              <option value="1000000-2000000">$1,000,000 - $2,000,000</option>
-              <option value="2000000-10000000">$2,000,000+</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="bedrooms" className="block text-gray-700 text-sm font-medium mb-2">
-              Bedrooms
-            </label>
-            <select
-              id="bedrooms"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={filters.bedrooms || ''}
-              onChange={handleFilterChange}
-            >
-              <option value="">Any</option>
-              <option value="1">1+</option>
-              <option value="2">2+</option>
-              <option value="3">3+</option>
-              <option value="4">4+</option>
-              <option value="5">5+</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="mt-4 flex justify-end">
-          <button
-            type="submit"
-            className="px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300"
-          >
-            Apply Filters
-          </button>
-        </div>
-      </form>
+      {/* Advanced Filters */}
+      <AdvancedFilters
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onApplyFilters={applyFilters}
+        className="mb-8"
+      />
 
       {/* Property Grid */}
       {loading ? (
