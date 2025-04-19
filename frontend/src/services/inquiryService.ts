@@ -27,6 +27,16 @@ export interface InquiryData {
   message: string;
 }
 
+export interface GeneralInquiryData {
+  name: string;
+  phone: string;
+  email?: string;
+  propertyType?: string;
+  bedroomCount?: string;
+  propertyInterest?: string;
+  message?: string;
+}
+
 // Create a new inquiry
 export const createInquiry = async (inquiryData: InquiryData) => {
   try {
@@ -79,5 +89,48 @@ export const getAllInquiries = async () => {
   } catch (error) {
     console.error('Error fetching all inquiries:', error);
     throw error;
+  }
+};
+
+// Create a general inquiry (not tied to a specific property)
+export const createGeneralInquiry = async (inquiryData: GeneralInquiryData) => {
+  try {
+    // First try to submit to the backend if it has a general inquiry endpoint
+    try {
+      const response = await api.post('/inquiries/general', inquiryData);
+      return response.data;
+    } catch (apiError) {
+      // If the endpoint doesn't exist or there's an error, store in localStorage as a fallback
+      const existingInquiries = JSON.parse(localStorage.getItem('generalInquiries') || '[]');
+      const newInquiry = {
+        ...inquiryData,
+        id: `inquiry-${Date.now()}`,
+        createdAt: new Date().toISOString(),
+        status: 'new'
+      };
+
+      existingInquiries.push(newInquiry);
+      localStorage.setItem('generalInquiries', JSON.stringify(existingInquiries));
+
+      return newInquiry;
+    }
+  } catch (error) {
+    console.error('Error creating general inquiry:', error);
+    throw error;
+  }
+};
+
+// Get all general inquiries from localStorage (admin only)
+export const getGeneralInquiries = () => {
+  try {
+    // Get inquiries from localStorage
+    const inquiries = JSON.parse(localStorage.getItem('generalInquiries') || '[]');
+
+    // No test data needed anymore
+
+    return inquiries;
+  } catch (error) {
+    console.error('Error fetching general inquiries:', error);
+    return [];
   }
 };

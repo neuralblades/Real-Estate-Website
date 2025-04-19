@@ -3,12 +3,14 @@
 import React, { useState, useEffect, Usable } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 import PropertyCard from '@/components/properties/PropertyCard';
 import { getPropertyById, getProperties, Property } from '@/services/propertyService';
 import { createInquiry } from '@/services/inquiryService';
 import { getFullImageUrl } from '@/utils/imageUtils';
 import { Dialog, Transition } from '@headlessui/react';
 import MapComponent from '@/components/Map';
+import Chatbot from '@/components/chatbot/Chatbot';
 
 // Mock data for properties
 const properties = [
@@ -116,6 +118,24 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
   const [formSubmitting, setFormSubmitting] = useState<boolean>(false);
   const [formSuccess, setFormSuccess] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Auth context for user info
+  const { user } = useAuth();
+
+  // Remove global chatbot when on property page to use the property-specific one
+  useEffect(() => {
+    const globalChatbot = document.querySelector('.global-chatbot');
+    if (globalChatbot) {
+      globalChatbot.classList.add('hidden');
+    }
+
+    return () => {
+      const globalChatbot = document.querySelector('.global-chatbot');
+      if (globalChatbot) {
+        globalChatbot.classList.remove('hidden');
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const fetchPropertyDetails = async () => {
@@ -249,6 +269,8 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
       </div>
     );
   }
+
+  // Property details content starts here
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -454,6 +476,19 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
                 </svg>
                 {property.agent?.email || 'agent@luxuryestates.com'}
               </p>
+
+              {/* Direct Message Button - Only show if user is logged in */}
+              {user && property.agent && (
+                <Link
+                  href={`/messages?inquiry=${property.id}`}
+                  className="mt-4 w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md flex items-center justify-center transition duration-300"
+                >
+                  <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                  Message Agent
+                </Link>
+              )}
             </div>
           </div>
 
@@ -676,6 +711,9 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
           </div>
         </Dialog>
       </Transition>
+
+      {/* Property-specific chatbot */}
+      <Chatbot currentProperty={property} />
     </div>
   );
 }

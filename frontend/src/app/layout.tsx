@@ -5,6 +5,7 @@ import "./globals.css";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import Chatbot from "@/components/chatbot/Chatbot";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 const geistSans = Geist({
@@ -35,6 +36,9 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <div className="global-chatbot">
+            <Chatbot />
+          </div>
         </AuthProvider>
       </body>
     </html>

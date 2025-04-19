@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import PropertyCard from './PropertyCard';
 import { getFeaturedProperties, Property } from '@/services/propertyService';
 
@@ -42,7 +43,7 @@ const fallbackProperties = [
 ];
 
 const FeaturedProperties = () => {
-  const [properties, setProperties] = useState<any[]>(fallbackProperties);
+  const [properties, setProperties] = useState<Property[]>(fallbackProperties as unknown as Property[]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -101,12 +102,12 @@ const FeaturedProperties = () => {
         )}
 
         <div className="text-center mt-12">
-          <a
+          <Link
             href="/properties"
             className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300"
           >
             View All Properties
-          </a>
+          </Link>
         </div>
       </div>
     </section>

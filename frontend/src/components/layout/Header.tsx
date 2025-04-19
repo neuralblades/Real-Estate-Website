@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import NotificationBadge from '@/components/messaging/NotificationBadge';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -39,15 +40,20 @@ const Header = () => {
         <div className="hidden md:flex space-x-4">
           {user ? (
             <div className="relative">
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-blue-600 transition duration-300"
-              >
-                <span>{user.firstName}</span>
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
+              <div className="flex items-center space-x-4">
+                {/* Notification Badge */}
+                <NotificationBadge />
+
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-blue-600 transition duration-300"
+                >
+                  <span>{user.firstName}</span>
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
 
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
@@ -143,6 +149,9 @@ const Header = () => {
                 <>
                   <Link href="/profile" className="text-gray-700 hover:text-blue-600 transition duration-300">
                     Profile
+                  </Link>
+                  <Link href="/messages" className="text-gray-700 hover:text-blue-600 transition duration-300">
+                    Messages
                   </Link>
                   <Link href="/saved-properties" className="text-gray-700 hover:text-blue-600 transition duration-300">
                     Saved Properties

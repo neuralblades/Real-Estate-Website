@@ -1,6 +1,90 @@
 "use client";
 
+import { useState, FormEvent } from 'react';
+import { submitContactForm } from '@/services/contactService';
+
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  });
+
+  const [formSubmitting, setFormSubmitting] = useState(false);
+  const [formSuccess, setFormSuccess] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setFormSubmitting(true);
+    setFormError(null);
+
+    // Debug: Log the form data
+    console.log('Submitting form data:', formData);
+
+    try {
+      // Create the form data object
+      const formDataToSubmit = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message
+      };
+
+      // Submit the form
+      const response = await submitContactForm(formDataToSubmit);
+
+      // Debug: Log the response
+      console.log('Form submission response:', response);
+
+      if (response.success) {
+        // Manually add the form to localStorage to ensure it's saved
+        const storedForms = JSON.parse(localStorage.getItem('contactForms') || '[]');
+        const newForm = {
+          ...formDataToSubmit,
+          id: `contact-${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          status: 'new'
+        };
+
+        storedForms.push(newForm);
+        localStorage.setItem('contactForms', JSON.stringify(storedForms));
+
+        // Debug: Check localStorage after submission
+        console.log('Forms in localStorage after manual update:', storedForms);
+
+        setFormSuccess(true);
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        setFormError('Failed to submit form. Please try again.');
+      }
+    } catch (err) {
+      console.error('Error submitting contact form:', err);
+      setFormError('Failed to submit form. Please try again.');
+    } finally {
+      setFormSubmitting(false);
+    }
+  };
   return (
     <div>
       {/* Hero Section */}
@@ -108,88 +192,121 @@ export default function ContactPage() {
             {/* Contact Form */}
             <div className="bg-gray-50 p-8 rounded-lg shadow-md">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
-              <form>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <label htmlFor="first-name" className="block text-gray-700 text-sm font-medium mb-2">
-                      First Name
+
+              {formSuccess ? (
+                <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
+                  <p className="font-medium">Thank you for your message!</p>
+                  <p>We have received your inquiry and will contact you shortly.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit}>
+                  {formError && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+                      <p>{formError}</p>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                      <label htmlFor="firstName" className="block text-gray-700 text-sm font-medium mb-2">
+                        First Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="John"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="lastName" className="block text-gray-700 text-sm font-medium mb-2">
+                        Last Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="lastName"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Doe"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <label htmlFor="phone" className="block text-gray-700 text-sm font-medium mb-2">
+                      Phone Number *
                     </label>
                     <input
-                      type="text"
-                      id="first-name"
+                      type="tel"
+                      id="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="John"
+                      placeholder="(123) 456-7890"
+                      required
                     />
                   </div>
 
-                  <div>
-                    <label htmlFor="last-name" className="block text-gray-700 text-sm font-medium mb-2">
-                      Last Name
+                  <div className="mb-6">
+                    <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-2">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="john@example.com"
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-6">
+                    <label htmlFor="subject" className="block text-gray-700 text-sm font-medium mb-2">
+                      Subject *
                     </label>
                     <input
                       type="text"
-                      id="last-name"
+                      id="subject"
+                      value={formData.subject}
+                      onChange={handleInputChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Doe"
+                      placeholder="Property Inquiry"
+                      required
                     />
                   </div>
-                </div>
 
-                <div className="mb-6">
-                  <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="john@example.com"
-                  />
-                </div>
+                  <div className="mb-6">
+                    <label htmlFor="message" className="block text-gray-700 text-sm font-medium mb-2">
+                      Message *
+                    </label>
+                    <textarea
+                      id="message"
+                      rows={6}
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="How can we help you?"
+                      required
+                    ></textarea>
+                  </div>
 
-                <div className="mb-6">
-                  <label htmlFor="phone" className="block text-gray-700 text-sm font-medium mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="(123) 456-7890"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label htmlFor="subject" className="block text-gray-700 text-sm font-medium mb-2">
-                    Subject
-                  </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Property Inquiry"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label htmlFor="message" className="block text-gray-700 text-sm font-medium mb-2">
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    rows={6}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="How can we help you?"
-                  ></textarea>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition duration-300"
-                >
-                  Send Message
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition duration-300"
+                    disabled={formSubmitting}
+                  >
+                    {formSubmitting ? 'Sending...' : 'Send Message'}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>

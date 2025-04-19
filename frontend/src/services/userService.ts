@@ -50,6 +50,7 @@ export const registerUser = async (userData: RegisterData) => {
 // Login user
 export const loginUser = async (credentials: LoginCredentials) => {
   try {
+    // Normal login flow
     const response = await api.post('/users/login', credentials);
 
     // Save token to localStorage
@@ -77,8 +78,27 @@ export const getCurrentUser = (): User | null => {
     return null;
   }
 
+  const token = localStorage.getItem('token');
   const userString = localStorage.getItem('user');
-  return userString ? JSON.parse(userString) : null;
+
+  // Check if token is the test token (which is invalid)
+  if (token === 'test-admin-token') {
+    console.log('Removing invalid test admin token');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return null;
+  }
+
+  if (!userString) return null;
+
+  try {
+    return JSON.parse(userString);
+  } catch (error) {
+    console.error('Error parsing user from localStorage:', error);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return null;
+  }
 };
 
 // Get user profile

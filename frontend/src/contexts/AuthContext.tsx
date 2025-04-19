@@ -2,10 +2,10 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  loginUser, 
-  registerUser, 
-  logoutUser, 
+import {
+  loginUser,
+  registerUser,
+  logoutUser,
   getCurrentUser,
   LoginCredentials,
   RegisterData,
@@ -16,6 +16,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
+  isAdmin: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => void;
@@ -85,12 +86,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setError(null);
   };
 
+  // Check if user is admin
+  const isAdmin = user?.role === 'admin';
+
   return (
     <AuthContext.Provider
       value={{
         user,
         loading,
         error,
+        isAdmin,
         login,
         register,
         logout,

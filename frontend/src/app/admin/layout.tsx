@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminLayout({
   children,
@@ -12,30 +13,24 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   // Always keep sidebar open by default
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const { user, loading, isAdmin } = useAuth();
 
   useEffect(() => {
+    if (loading) return;
+
     // Check if user is authenticated and is an admin
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null;
-
-    if (!token || !user || user.role !== 'admin') {
+    if (!user || !isAdmin) {
       router.push('/auth/login?redirect=/admin/dashboard');
-    } else {
-      setIsAuthenticated(true);
     }
-
-    setIsLoading(false);
-  }, [router]);
+  }, [user, isAdmin, loading, router]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  if (isLoading) {
+  if (loading || (!user && !loading)) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
@@ -43,7 +38,7 @@ export default function AdminLayout({
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAdmin) {
     return null; // Will redirect in useEffect
   }
 
@@ -133,13 +128,39 @@ export default function AdminLayout({
               <Link
                 href="/admin/inquiries"
                 className={`flex items-center py-3 px-4 ${
-                  pathname.startsWith('/admin/inquiries') ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname === '/admin/inquiries' ? 'bg-blue-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
-                {isSidebarOpen && <span className="ml-3">Inquiries</span>}
+                {isSidebarOpen && <span className="ml-3">Property Inquiries</span>}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/admin/general-inquiries"
+                className={`flex items-center py-3 px-4 ${
+                  pathname === '/admin/general-inquiries' ? 'bg-blue-700' : 'hover:bg-gray-800'
+                } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                </svg>
+                {isSidebarOpen && <span className="ml-3">Chatbot Inquiries</span>}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/admin/contact-submissions"
+                className={`flex items-center py-3 px-4 ${
+                  pathname === '/admin/contact-submissions' ? 'bg-blue-700' : 'hover:bg-gray-800'
+                } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                {isSidebarOpen && <span className="ml-3">Contact Submissions</span>}
               </Link>
             </li>
           </ul>
@@ -173,7 +194,9 @@ export default function AdminLayout({
                 {pathname === '/admin/dashboard' && 'Dashboard'}
                 {pathname.startsWith('/admin/properties') && 'Properties Management'}
                 {pathname.startsWith('/admin/users') && 'User Management'}
-                {pathname.startsWith('/admin/inquiries') && 'Inquiries'}
+                {pathname === '/admin/inquiries' && 'Property Inquiries'}
+                {pathname === '/admin/general-inquiries' && 'Chatbot Inquiries'}
+                {pathname === '/admin/contact-submissions' && 'Contact Submissions'}
               </h2>
             </div>
             <div className="flex items-center">
