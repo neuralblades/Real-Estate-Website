@@ -373,7 +373,15 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
             </div>
 
             <h3 className="text-xl font-bold text-gray-900 mb-2">Description</h3>
-            <p className="text-gray-700 mb-6 leading-relaxed">{property.description}</p>
+            <div
+              className="text-gray-700 mb-6 leading-relaxed whitespace-pre-wrap"
+              style={{
+                display: 'block',
+                lineHeight: '1.6',
+              }}
+            >
+              {property.description}
+            </div>
 
             <h3 className="text-xl font-bold text-gray-900 mb-2">Features</h3>
             <ul className="grid grid-cols-1 md:grid-cols-3 gap-2">
