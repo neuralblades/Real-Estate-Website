@@ -45,10 +45,14 @@ app.use('/uploads', (req, res, next) => {
 const propertyRoutes = require('./routes/propertyRoutes');
 const userRoutes = require('./routes/userRoutes');
 const inquiryRoutes = require('./routes/inquiryRoutes');
+const messageRoutes = require('./routes/messageRoutes');
+const contactRoutes = require('./routes/contactRoutes');
 
 app.use('/api/properties', propertyRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/inquiries', inquiryRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Root route
 app.get('/', (req, res) => {
