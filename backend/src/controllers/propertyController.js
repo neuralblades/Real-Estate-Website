@@ -313,6 +313,7 @@ const updateProperty = async (req, res) => {
       features,
       yearBuilt,
       featured,
+      existingImages,
     } = req.body;
 
     // Create update object
@@ -350,13 +351,38 @@ const updateProperty = async (req, res) => {
       updateData.featured = featured === 'true' || featured === true;
     }
 
+    // Handle existing images if provided
+    if (existingImages) {
+      try {
+        // Parse the existingImages JSON string
+        const parsedImages = JSON.parse(existingImages);
+        updateData.images = parsedImages;
+
+        // If images array is empty or if the main image was removed, update main image
+        if (parsedImages.length === 0) {
+          updateData.mainImage = null;
+        } else if (!parsedImages.includes(property.mainImage)) {
+          updateData.mainImage = parsedImages[0];
+        }
+      } catch (e) {
+        console.error('Error parsing existingImages:', e);
+      }
+    }
+
     // Process new images
     if (req.files && req.files.length > 0) {
       const newImages = req.files.map((file) => `/uploads/${file.filename}`);
-      updateData.images = [...(property.images || []), ...newImages];
+
+      // If existingImages was provided, add new images to the parsed array
+      if (updateData.images) {
+        updateData.images = [...updateData.images, ...newImages];
+      } else {
+        // Otherwise, add new images to existing images from the database
+        updateData.images = [...(property.images || []), ...newImages];
+      }
 
       // If no main image, set first image as main
-      if (!property.mainImage && updateData.images.length > 0) {
+      if ((!property.mainImage || updateData.mainImage === null) && updateData.images.length > 0) {
         updateData.mainImage = updateData.images[0];
       }
     }

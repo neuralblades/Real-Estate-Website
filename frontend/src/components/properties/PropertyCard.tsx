@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { getFullImageUrl } from '@/utils/imageUtils';
 
 interface PropertyCardProps {
   id: string;
@@ -39,11 +40,12 @@ const PropertyCard = ({
       <Link href={`/properties/${id}`}>
         <div className="relative h-64 w-full">
           <Image
-            src={imageUrl}
+            src={getFullImageUrl(imageUrl)}
             alt={title}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            unoptimized
           />
           {featured && (
             <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">

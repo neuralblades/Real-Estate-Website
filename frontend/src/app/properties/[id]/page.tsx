@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, Usable } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import PropertyCard from '@/components/properties/PropertyCard';
-import { getPropertyById, getProperties } from '@/services/propertyService';
+import { getPropertyById, getProperties, Property } from '@/services/propertyService';
 import { createInquiry } from '@/services/inquiryService';
-import { use } from 'react';
+import { getFullImageUrl } from '@/utils/imageUtils';
+import { Dialog, Transition } from '@headlessui/react';
 
 // Mock data for properties
 const properties = [
@@ -90,14 +91,19 @@ const properties = [
   },
 ];
 
-export default function PropertyDetailPage({ params }: { params: { id: string } }) {
-  // Unwrap params using React.use()
-  const unwrappedParams = use(params);
+// Create a client component wrapper
+function PropertyDetailClient({ propertyId }: { propertyId: string }) {
+  // Use the ID directly
+  const id = propertyId;
 
-  const [property, setProperty] = useState<any>(null);
-  const [similarProperties, setSimilarProperties] = useState<any[]>([]);
+  const [property, setProperty] = useState<Property | null>(null);
+  const [similarProperties, setSimilarProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Photo gallery modal state
+  const [isGalleryOpen, setIsGalleryOpen] = useState<boolean>(false);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number>(0);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -115,7 +121,6 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
       setLoading(true);
       try {
         // Validate ID before making the request
-        const id = unwrappedParams.id;
         if (!id || isNaN(Number(id))) {
           setError('Invalid property ID');
           setLoading(false);
@@ -136,7 +141,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
             if (similarResponse.success && similarResponse.properties.length > 0) {
               // Filter out the current property
               const filtered = similarResponse.properties.filter(
-                (p: any) => p.id !== response.property.id
+                (p: { id: string }) => p.id !== response.property.id
               ).slice(0, 3);
               setSimilarProperties(filtered);
             }
@@ -144,19 +149,19 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
             console.error('Error fetching similar properties:', err);
             // Use fallback similar properties
             const fallbackSimilar = properties
-              .filter(p => p.id !== unwrappedParams.id)
+              .filter(p => p.id !== id)
               .slice(0, 3);
-            setSimilarProperties(fallbackSimilar);
+            setSimilarProperties(fallbackSimilar as unknown as Property[]);
           }
         } else {
           // If API fails, use fallback data
-          const fallbackProperty = properties.find(p => p.id === unwrappedParams.id);
+          const fallbackProperty = properties.find(p => p.id === id);
           if (fallbackProperty) {
-            setProperty(fallbackProperty);
+            setProperty(fallbackProperty as unknown as Property);
             const fallbackSimilar = properties
-              .filter(p => p.id !== unwrappedParams.id)
+              .filter(p => p.id !== id)
               .slice(0, 3);
-            setSimilarProperties(fallbackSimilar);
+            setSimilarProperties(fallbackSimilar as unknown as Property[]);
           } else {
             setError('Property not found');
           }
@@ -164,13 +169,13 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
       } catch (err) {
         console.error('Error fetching property details:', err);
         // Use fallback data
-        const fallbackProperty = properties.find(p => p.id === unwrappedParams.id);
+        const fallbackProperty = properties.find(p => p.id === id);
         if (fallbackProperty) {
-          setProperty(fallbackProperty);
+          setProperty(fallbackProperty as unknown as Property);
           const fallbackSimilar = properties
-            .filter(p => p.id !== unwrappedParams.id)
+            .filter(p => p.id !== id)
             .slice(0, 3);
-          setSimilarProperties(fallbackSimilar);
+          setSimilarProperties(fallbackSimilar as unknown as Property[]);
         } else {
           setError('Property not found');
         }
@@ -180,7 +185,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
     };
 
     fetchPropertyDetails();
-  }, [unwrappedParams.id]);
+  }, [id]);
 
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -196,7 +201,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
     try {
       const response = await createInquiry({
-        property: unwrappedParams.id,
+        property: id,
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
@@ -266,28 +271,62 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
       {/* Property Images */}
       <div className="mb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-span-2 relative h-96">
+        <div className="grid grid-cols-12 gap-4">
+          {/* Main large image (left side) */}
+          <div className="col-span-12 md:col-span-8 relative h-[500px]">
             <Image
-              src={property.images[0]}
+              src={getFullImageUrl(property.images[0])}
               alt={property.title}
               fill
               className="object-cover rounded-lg"
-              sizes="(max-width: 768px) 100vw, 50vw"
+              sizes="(max-width: 768px) 100vw, 66vw"
               priority
+              unoptimized
             />
           </div>
-          {property.images.slice(1, 5).map((image, index) => (
-            <div key={index} className="relative h-48">
+
+          {/* Right side column with two images */}
+          <div className="col-span-12 md:col-span-4 grid grid-rows-2 gap-4">
+            {/* Top right image */}
+            <div className="relative h-[240px]">
               <Image
-                src={image}
-                alt={`${property.title} - Image ${index + 2}`}
+                src={getFullImageUrl(property.images[1] || property.images[0])}
+                alt={`${property.title} - Image 2`}
                 fill
                 className="object-cover rounded-lg"
-                sizes="(max-width: 768px) 100vw, 25vw"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                unoptimized
               />
             </div>
-          ))}
+
+            {/* Bottom right image */}
+            <div className="relative h-[240px]">
+              <Image
+                src={getFullImageUrl(property.images[2] || property.images[0])}
+                alt={`${property.title} - Image 3`}
+                fill
+                className="object-cover rounded-lg"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                unoptimized
+              />
+            </div>
+          </div>
+
+          {/* View all photos button */}
+          <div className="col-span-12 flex justify-start mt-2">
+            <button
+              onClick={() => {
+                setCurrentPhotoIndex(0);
+                setIsGalleryOpen(true);
+              }}
+              className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              View all {property.images.length} photos
+            </button>
+          </div>
         </div>
       </div>
 
@@ -338,7 +377,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
             <h3 className="text-xl font-bold text-gray-900 mb-2">Features</h3>
             <ul className="grid grid-cols-1 md:grid-cols-3 gap-2">
-              {property.features.map((feature, index) => (
+              {property.features.map((feature: string, index: number) => (
                 <li key={index} className="flex items-center text-gray-700">
                   <svg className="h-5 w-5 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -366,11 +405,12 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
             <div className="flex items-center mb-4">
               <div className="relative h-16 w-16 rounded-full overflow-hidden mr-4">
                 <Image
-                  src={property.agent?.avatar || 'https://randomuser.me/api/portraits/men/32.jpg'}
+                  src={getFullImageUrl(property.agent?.avatar || 'https://randomuser.me/api/portraits/men/32.jpg')}
                   alt={property.agent?.firstName ? `${property.agent.firstName} ${property.agent.lastName}` : 'Real Estate Agent'}
                   fill
                   sizes="(max-width: 768px) 100vw, 64px"
                   className="object-cover"
+                  unoptimized
                 />
               </div>
               <div>
@@ -498,13 +538,131 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               bedrooms={property.bedrooms}
               bathrooms={property.bathrooms}
               area={property.area}
-              imageUrl={property.mainImage || property.imageUrl}
+              imageUrl={property.mainImage || ''}
               featured={property.featured}
               agent={property.agent}
             />
           ))}
         </div>
       </div>
+
+      {/* Photo Gallery Modal */}
+      <Transition show={isGalleryOpen} as="div">
+        <Dialog
+          open={isGalleryOpen}
+          onClose={() => setIsGalleryOpen(false)}
+          className="relative z-50"
+        >
+          {/* Backdrop */}
+          <Transition.Child
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/70" />
+          </Transition.Child>
+
+          {/* Full-screen container */}
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4">
+              <Transition.Child
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-6xl transform overflow-hidden rounded-lg bg-black p-6 shadow-xl transition-all">
+                  <div className="relative">
+                    {/* Close button */}
+                    <button
+                      onClick={() => setIsGalleryOpen(false)}
+                      className="absolute right-0 top-0 z-10 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+                    >
+                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+
+                    {/* Main image */}
+                    <div className="relative h-[70vh] w-full">
+                      <Image
+                        src={getFullImageUrl(property.images[currentPhotoIndex])}
+                        alt={`${property.title} - Image ${currentPhotoIndex + 1}`}
+                        fill
+                        className="object-contain"
+                        sizes="100vw"
+                        unoptimized
+                      />
+                    </div>
+
+                    {/* Navigation buttons */}
+                    <div className="absolute inset-y-0 left-0 flex items-center">
+                      <button
+                        onClick={() => setCurrentPhotoIndex((prev) => (prev === 0 ? property.images.length - 1 : prev - 1))}
+                        className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 ml-2"
+                      >
+                        <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div className="absolute inset-y-0 right-0 flex items-center">
+                      <button
+                        onClick={() => setCurrentPhotoIndex((prev) => (prev === property.images.length - 1 ? 0 : prev + 1))}
+                        className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 mr-2"
+                      >
+                        <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Image counter */}
+                    <div className="absolute bottom-4 left-0 right-0 text-center text-white">
+                      {currentPhotoIndex + 1} / {property.images.length}
+                    </div>
+                  </div>
+
+                  {/* Thumbnails */}
+                  <div className="mt-4 flex space-x-2 overflow-x-auto pb-2">
+                    {property.images.map((image: string, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentPhotoIndex(index)}
+                        className={`relative h-16 w-24 flex-shrink-0 overflow-hidden rounded ${index === currentPhotoIndex ? 'ring-2 ring-blue-500' : ''}`}
+                      >
+                        <Image
+                          src={getFullImageUrl(image)}
+                          alt={`Thumbnail ${index + 1}`}
+                          fill
+                          className="object-cover"
+                          sizes="96px"
+                          unoptimized
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   );
+}
+
+
+// Server component that passes the ID to the client component
+export default function PropertyDetailPage({ params }: { params: Usable<{ id: string }> }) {
+  // Properly unwrap params using React.use()
+  const unwrappedParams = React.use(params);
+  const propertyId = unwrappedParams.id;
+  return <PropertyDetailClient propertyId={propertyId} />;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from 'next/image';
+import { getFullImageUrl } from '@/utils/imageUtils';
 
 const Testimonials = () => {
   const testimonials = [
@@ -16,14 +17,14 @@ const Testimonials = () => {
       name: 'Michael Chen',
       role: 'Property Investor',
       image: 'https://randomuser.me/api/portraits/men/2.jpg',
-      quote: "As an investor, I appreciate their market knowledge and attention to detail. They've helped me secure multiple high-performing properties over the years.",
+      quote: "As an investor, I appreciate their market knowledge and attention to detail. They&apos;ve helped me secure multiple high-performing properties over the years.",
     },
     {
       id: 3,
       name: 'Emily Rodriguez',
       role: 'First-time Buyer',
       image: 'https://randomuser.me/api/portraits/women/3.jpg',
-      quote: "Being a first-time buyer was intimidating, but the team at Luxury Estates guided me through every step. I couldn't be happier with my new apartment!",
+      quote: "Being a first-time buyer was intimidating, but the team at Luxury Estates guided me through every step. I couldn&apos;t be happier with my new apartment!",
     },
   ];
 
@@ -33,7 +34,7 @@ const Testimonials = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Our Clients Say</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Don't just take our word for it. Here's what our satisfied clients have to say about their experience with Luxury Estates.
+            Don&apos;t just take our word for it. Here&apos;s what our satisfied clients have to say about their experience with Luxury Estates.
           </p>
         </div>
 
@@ -43,7 +44,7 @@ const Testimonials = () => {
               <div className="flex items-center mb-4">
                 <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4">
                   <Image
-                    src={testimonial.image}
+                    src={getFullImageUrl(testimonial.image)}
                     alt={testimonial.name}
                     fill
                     sizes="(max-width: 768px) 100vw, 48px"
@@ -56,7 +57,7 @@ const Testimonials = () => {
                 </div>
               </div>
 
-              <p className="text-gray-700 italic">"{testimonial.quote}"</p>
+              <p className="text-gray-700 italic">&quot;{testimonial.quote}&quot;</p>
 
               <div className="mt-4 flex text-yellow-400">
                 {[...Array(5)].map((_, i) => (

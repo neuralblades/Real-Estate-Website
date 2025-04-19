@@ -4,9 +4,23 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getProperties, deleteProperty } from '@/services/propertyService';
+import { getFullImageUrl } from '@/utils/imageUtils';
+
+// Define Property interface to avoid using 'any'
+interface Property {
+  id: string;
+  title: string;
+  price: number;
+  location: string;
+  mainImage?: string;
+  propertyType: string;
+  status: string;
+  featured: boolean;
+  createdAt: string;
+}
 
 export default function AdminPropertiesPage() {
-  const [properties, setProperties] = useState<any[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,7 +29,7 @@ export default function AdminPropertiesPage() {
   const [filterType, setFilterType] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [propertyToDelete, setPropertyToDelete] = useState<any>(null);
+  const [propertyToDelete, setPropertyToDelete] = useState<Property | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchProperties = async (page = 1, keyword = searchTerm, type = filterType, status = filterStatus) => {
@@ -45,6 +59,7 @@ export default function AdminPropertiesPage() {
 
   useEffect(() => {
     fetchProperties();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -57,7 +72,7 @@ export default function AdminPropertiesPage() {
     fetchProperties(page, searchTerm, filterType, filterStatus);
   };
 
-  const handleDeleteClick = (property: any) => {
+  const handleDeleteClick = (property: Property) => {
     setPropertyToDelete(property);
     setShowDeleteModal(true);
   };
@@ -192,11 +207,12 @@ export default function AdminPropertiesPage() {
                         <div className="h-10 w-10 flex-shrink-0 mr-3 relative">
                           {property.mainImage ? (
                             <Image
-                              src={property.mainImage}
+                              src={getFullImageUrl(property.mainImage)}
                               alt={property.title}
                               fill
                               sizes="(max-width: 768px) 100vw, 40px"
                               className="object-cover rounded-md"
+                              unoptimized
                             />
                           ) : (
                             <div className="h-10 w-10 bg-gray-200 rounded-md flex items-center justify-center">
@@ -313,7 +329,7 @@ export default function AdminPropertiesPage() {
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
             <p className="mb-6">
-              Are you sure you want to delete the property "{propertyToDelete?.title}"? This action cannot be undone.
+              Are you sure you want to delete the property &quot;{propertyToDelete?.title}&quot;? This action cannot be undone.
             </p>
             <div className="flex justify-end space-x-4">
               <button

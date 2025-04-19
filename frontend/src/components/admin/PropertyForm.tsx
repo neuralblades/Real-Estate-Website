@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createProperty, updateProperty, getPropertyById } from '@/services/propertyService';
+import { getFullImageUrl } from '@/utils/imageUtils';
 
 interface PropertyFormProps {
   propertyId?: string;
@@ -36,6 +37,7 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
     area: '',
     yearBuilt: '',
     features: [] as string[],
+    featured: false,
   });
 
   // Common features for checkboxes
@@ -83,6 +85,7 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
               area: property.area?.toString() || '',
               yearBuilt: property.yearBuilt?.toString() || '',
               features: property.features || [],
+              featured: property.featured || false,
             });
 
             // Set existing images
@@ -473,6 +476,20 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
             />
           </div>
 
+          <div>
+            <label htmlFor="featured" className="flex items-center text-sm font-medium text-gray-700 mb-1">
+              <input
+                type="checkbox"
+                id="featured"
+                name="featured"
+                checked={formData.featured}
+                onChange={(e) => setFormData({...formData, featured: e.target.checked})}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-2"
+              />
+              Featured Property (will appear on homepage)
+            </label>
+          </div>
+
           {/* Features */}
           <div className="md:col-span-2">
             <h2 className="text-xl font-semibold mb-4 mt-4">Features</h2>
@@ -507,11 +524,12 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
                     <div key={index} className="relative group">
                       <div className="relative h-32 w-full rounded-md overflow-hidden">
                         <Image
-                          src={image}
+                          src={getFullImageUrl(image)}
                           alt={`Property image ${index + 1}`}
                           fill
                           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
                           className="object-cover"
+                          unoptimized
                         />
                       </div>
                       <button
@@ -546,7 +564,7 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
                     <p className="mb-2 text-sm text-gray-500">
                       <span className="font-semibold">Click to upload</span> or drag and drop
                     </p>
-                    <p className="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB</p>
+                    <p className="text-xs text-gray-500">PNG, JPG, JPEG, WebP up to 10MB</p>
                   </div>
                   <input
                     id="images"
@@ -575,6 +593,7 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
                           fill
                           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
                           className="object-cover"
+                          unoptimized
                         />
                       </div>
                       <button
