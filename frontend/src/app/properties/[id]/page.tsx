@@ -8,6 +8,7 @@ import { getPropertyById, getProperties, Property } from '@/services/propertySer
 import { createInquiry } from '@/services/inquiryService';
 import { getFullImageUrl } from '@/utils/imageUtils';
 import { Dialog, Transition } from '@headlessui/react';
+import MapComponent from '@/components/Map';
 
 // Mock data for properties
 const properties = [
@@ -399,8 +400,19 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
           {/* Location */}
           <div className="bg-white p-6 rounded-lg shadow-md mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Location</h2>
-            <div className="bg-gray-200 h-64 rounded-lg flex items-center justify-center">
-              <p className="text-gray-600">Map will be displayed here</p>
+            <MapComponent
+              address={property.address || ''}
+              location={property.location || ''}
+              height="400px"
+              zoom={14}
+            />
+            <div className="mt-4 text-gray-700">
+              {property.address && (
+                <p className="mb-1"><strong>Address:</strong> {property.address}</p>
+              )}
+              {property.location && (
+                <p><strong>Neighborhood:</strong> {property.location}</p>
+              )}
             </div>
           </div>
         </div>
