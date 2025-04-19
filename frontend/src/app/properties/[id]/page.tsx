@@ -332,7 +332,7 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
       </div>
 
       {/* Property Details and Contact Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
         {/* Property Details */}
         <div className="lg:col-span-2">
           {/* Overview */}
@@ -417,10 +417,11 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
           </div>
         </div>
 
-        {/* Contact Form and Agent Info */}
-        <div>
+        {/* Contact Form and Agent Info - Fixed on scroll */}
+        <div className="lg:sticky lg:top-15 lg:self-start h-fit">
+          <div className="space-y-8">
           {/* Agent Info */}
-          <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+          <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Listed By</h2>
             <div className="flex items-center mb-4">
               <div className="relative h-16 w-16 rounded-full overflow-hidden mr-4">
@@ -540,6 +541,7 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
                 </button>
               </form>
             )}
+          </div>
           </div>
         </div>
       </div>
