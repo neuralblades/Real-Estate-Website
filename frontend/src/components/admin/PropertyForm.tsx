@@ -32,6 +32,7 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
     zipCode: '',
     propertyType: 'house',
     status: 'for-sale',
+    isOffplan: false,
     bedrooms: '',
     bathrooms: '',
     area: '',
@@ -80,6 +81,7 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
               zipCode: property.zipCode || '',
               propertyType: property.propertyType || 'house',
               status: property.status || 'for-sale',
+              isOffplan: property.isOffplan || false,
               bedrooms: property.bedrooms?.toString() || '',
               bathrooms: property.bathrooms?.toString() || '',
               area: property.area?.toString() || '',
@@ -414,6 +416,28 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
               <option value="sold">Sold</option>
               <option value="rented">Rented</option>
             </select>
+          </div>
+
+
+
+          <div>
+            <label htmlFor="isOffplan" className="flex items-center text-sm font-medium text-gray-700 mb-1">
+              <input
+                type="checkbox"
+                id="isOffplan"
+                name="isOffplan"
+                checked={formData.isOffplan}
+                onChange={(e) => {
+                  const isOffplan = e.target.checked;
+                  setFormData({
+                    ...formData,
+                    isOffplan
+                  });
+                }}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-2"
+              />
+              Off Plan Property
+            </label>
           </div>
 
           <div>

@@ -126,81 +126,33 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   };
 
   return (
-    <div className={`bg-white p-6 rounded-lg shadow-md ${className}`}>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-gray-900">Filters</h2>
-        <button
-          type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
-        >
-          {isExpanded ? 'Show Less' : 'Show More'}
-          <svg
-            className={`ml-1 h-5 w-5 transform transition-transform ${
-              isExpanded ? 'rotate-180' : ''
-            }`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
-      </div>
-
+    <div className={`${className}`}>
       <form onSubmit={(e) => { e.preventDefault(); onApplyFilters(); }}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Location Filter */}
-          <div>
-            <label htmlFor="location" className="block text-gray-700 text-sm font-medium mb-2">
-              Location
-            </label>
-            <select
-              id="location"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-              value={filters.location || ''}
-              onChange={handleFilterChange}
-            >
-              {locationOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
+        <div className="flex flex-wrap items-center gap-2">
           {/* Property Type Filter */}
-          <div>
-            <label htmlFor="property-type" className="block text-gray-700 text-sm font-medium mb-2">
-              Property Type
-            </label>
+          <div className="min-w-[150px]">
             <select
               id="property-type"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 appearance-none bg-white"
               value={filters.type || ''}
               onChange={handleFilterChange}
             >
+              <option value="">Property Type</option>
               {propertyTypes.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
+                option.value && (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                )
               ))}
             </select>
           </div>
 
           {/* Price Range Filter */}
-          <div>
-            <label htmlFor="price-range" className="block text-gray-700 text-sm font-medium mb-2">
-              Price Range
-            </label>
+          <div className="min-w-[120px]">
             <select
               id="price-range"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 appearance-none bg-white"
               value={
                 filters.minPrice !== undefined && filters.maxPrice !== undefined
                   ? `${filters.minPrice}-${filters.maxPrice}`
@@ -208,32 +160,106 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
               }
               onChange={handleFilterChange}
             >
+              <option value="">Price</option>
               {priceRanges.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
+                option.value && (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                )
               ))}
             </select>
           </div>
 
-          {/* Additional filters that show when expanded */}
-          {isExpanded && (
-            <>
-              {/* Bedrooms Filter */}
+          {/* Bedrooms Filter */}
+          <div className="min-w-[100px]">
+            <select
+              id="bedrooms"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 appearance-none bg-white"
+              value={filters.bedrooms?.toString() || ''}
+              onChange={handleFilterChange}
+            >
+              <option value="">Beds</option>
+              {bedroomOptions.map((option) => (
+                option.value && (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                )
+              ))}
+            </select>
+          </div>
+
+          {/* Size Filter */}
+          <div className="min-w-[100px]">
+            <select
+              id="size"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 appearance-none bg-white"
+              value={filters.bathrooms?.toString() || ''}
+              onChange={handleFilterChange}
+            >
+              <option value="">Size</option>
+              {bathroomOptions.map((option) => (
+                option.value && (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                )
+              ))}
+            </select>
+          </div>
+
+          {/* Filters Button */}
+          <div className="min-w-[100px]">
+            <button
+              type="button"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 flex items-center justify-center"
+            >
+              <span>Filters</span>
+              <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Search Button */}
+          <div className="min-w-[100px]">
+            <button
+              type="submit"
+              className="w-full px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 flex items-center justify-center"
+            >
+              <span>Search</span>
+              <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+          </div>
+
+        </div>
+
+        {/* Additional filters that show when expanded */}
+        {isExpanded && (
+          <div className="mt-4 p-4 border border-gray-200 rounded-md bg-gray-50">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              {/* Location Filter */}
               <div>
-                <label htmlFor="bedrooms" className="block text-gray-700 text-sm font-medium mb-2">
-                  Bedrooms
+                <label htmlFor="location" className="block text-gray-700 text-sm font-medium mb-2">
+                  Location
                 </label>
                 <select
-                  id="bedrooms"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-                  value={filters.bedrooms?.toString() || ''}
+                  id="location"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 bg-white"
+                  value={filters.location || ''}
                   onChange={handleFilterChange}
                 >
-                  {bedroomOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
+                  <option value="">Any Location</option>
+                  {locationOptions.map((option) => (
+                    option.value && (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    )
                   ))}
                 </select>
               </div>
@@ -245,14 +271,17 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 </label>
                 <select
                   id="bathrooms"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 bg-white"
                   value={filters.bathrooms?.toString() || ''}
                   onChange={handleFilterChange}
                 >
+                  <option value="">Any</option>
                   {bathroomOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
+                    option.value && (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    )
                   ))}
                 </select>
               </div>
@@ -264,36 +293,33 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 </label>
                 <select
                   id="status"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 bg-white"
                   value={filters.status || ''}
                   onChange={handleFilterChange}
                 >
+                  <option value="">Any Status</option>
                   {statusOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
+                    option.value && (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    )
                   ))}
                 </select>
               </div>
-            </>
-          )}
-        </div>
+            </div>
 
-        <div className="mt-6 flex justify-between">
-          <button
-            type="button"
-            onClick={handleReset}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition duration-300"
-          >
-            Reset Filters
-          </button>
-          <button
-            type="submit"
-            className="px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300"
-          >
-            Apply Filters
-          </button>
-        </div>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-2 mr-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition duration-300"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );

@@ -49,6 +49,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/properties/offplan" className="text-gray-400 hover:text-white transition duration-300">
+                  Off Plan Properties
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className="text-gray-400 hover:text-white transition duration-300">
                   About Us
                 </Link>

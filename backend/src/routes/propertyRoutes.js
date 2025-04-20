@@ -8,6 +8,7 @@ const {
   updateProperty,
   deleteProperty,
   getAgentProperties,
+  getOffPlanProperties,
 } = require('../controllers/propertyController');
 const { protect, agent } = require('../middleware/authMiddleware');
 const multer = require('multer');
@@ -46,8 +47,9 @@ const upload = multer({
 // Public routes
 router.get('/', getProperties);
 router.get('/featured', getFeaturedProperties);
-router.get('/:id', getPropertyById);
+router.get('/offplan', getOffPlanProperties);
 router.get('/agent/:id', getAgentProperties);
+router.get('/:id', getPropertyById);
 
 // Protected routes
 router.post('/', protect, agent, upload.array('images', 10), createProperty);

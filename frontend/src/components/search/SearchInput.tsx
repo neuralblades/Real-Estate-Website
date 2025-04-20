@@ -147,7 +147,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
           onFocus={() => query.length >= 2 && setShowSuggestions(true)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className={`w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 placeholder-gray-500 ${className}`}
+          className={`w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 placeholder-gray-500 ${className}`}
           aria-label="Search"
         />
         <button
@@ -187,7 +187,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
                   key={suggestion.id}
                   onClick={() => handleSuggestionClick(suggestion)}
                   className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
-                    index === selectedIndex ? 'bg-blue-50' : ''
+                    index === selectedIndex ? 'bg-gray-50' : ''
                   }`}
                 >
                   <div className="font-medium text-gray-900">{suggestion.title}</div>

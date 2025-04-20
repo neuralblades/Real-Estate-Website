@@ -43,6 +43,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'for-sale',
     },
+    isOffplan: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
     bedrooms: {
       type: DataTypes.INTEGER,
       allowNull: false,

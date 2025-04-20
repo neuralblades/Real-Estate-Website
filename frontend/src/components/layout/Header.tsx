@@ -28,6 +28,9 @@ const Header = () => {
           <Link href="/properties" className="text-gray-700 hover:text-blue-600 transition duration-300">
             Properties
           </Link>
+          <Link href="/properties/offplan" className="text-gray-700 hover:text-blue-600 transition duration-300">
+            Off Plan
+          </Link>
           <Link href="/about" className="text-gray-700 hover:text-blue-600 transition duration-300">
             About
           </Link>
@@ -137,6 +140,9 @@ const Header = () => {
             </Link>
             <Link href="/properties" className="text-gray-700 hover:text-blue-600 transition duration-300">
               Properties
+            </Link>
+            <Link href="/properties/offplan" className="text-gray-700 hover:text-blue-600 transition duration-300">
+              Off Plan
             </Link>
             <Link href="/about" className="text-gray-700 hover:text-blue-600 transition duration-300">
               About

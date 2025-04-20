@@ -22,6 +22,13 @@ const getProperties = async (req, res) => {
       whereClause.status = req.query.status;
     }
 
+
+
+    // Filter by offplan status
+    if (req.query.isOffplan !== undefined) {
+      whereClause.isOffplan = req.query.isOffplan === 'true';
+    }
+
     // Filter by price range
     if (req.query.minPrice || req.query.maxPrice) {
       whereClause.price = {};
@@ -41,6 +48,17 @@ const getProperties = async (req, res) => {
     // Filter by bathrooms
     if (req.query.bathrooms) {
       whereClause.bathrooms = { [Op.gte]: Number(req.query.bathrooms) };
+    }
+
+    // Filter by area range
+    if (req.query.minArea || req.query.maxArea) {
+      whereClause.area = {};
+      if (req.query.minArea) {
+        whereClause.area[Op.gte] = Number(req.query.minArea);
+      }
+      if (req.query.maxArea) {
+        whereClause.area[Op.lte] = Number(req.query.maxArea);
+      }
     }
 
     // Filter by location
@@ -225,6 +243,7 @@ const createProperty = async (req, res) => {
       zipCode,
       propertyType,
       status,
+      isOffplan: req.body.isOffplan === 'true' || req.body.isOffplan === true,
       bedrooms,
       bathrooms,
       area,
@@ -329,6 +348,12 @@ const updateProperty = async (req, res) => {
     if (zipCode) updateData.zipCode = zipCode;
     if (propertyType) updateData.propertyType = propertyType;
     if (status) updateData.status = status;
+
+
+    // Handle isOffplan field explicitly if provided
+    if (req.body.isOffplan !== undefined) {
+      updateData.isOffplan = req.body.isOffplan === 'true' || req.body.isOffplan === true;
+    }
     if (bedrooms) updateData.bedrooms = bedrooms;
     if (bathrooms) updateData.bathrooms = bathrooms;
     if (area) updateData.area = area;
@@ -504,6 +529,84 @@ const getAgentProperties = async (req, res) => {
   }
 };
 
+// @desc    Get off plan properties
+// @route   GET /api/properties/offplan
+// @access  Public
+const getOffPlanProperties = async (req, res) => {
+  try {
+    const pageSize = 9;
+    const page = Number(req.query.page) || 1;
+
+    // Build where clause for filtering
+    const whereClause = { isOffplan: true };
+
+    // Filter by property type
+    if (req.query.type) {
+      whereClause.propertyType = req.query.type;
+    }
+
+    // Filter by price range
+    if (req.query.minPrice || req.query.maxPrice) {
+      whereClause.price = {};
+      if (req.query.minPrice) {
+        whereClause.price[Op.gte] = Number(req.query.minPrice);
+      }
+      if (req.query.maxPrice) {
+        whereClause.price[Op.lte] = Number(req.query.maxPrice);
+      }
+    }
+
+    // Filter by bedrooms
+    if (req.query.bedrooms) {
+      whereClause.bedrooms = { [Op.gte]: Number(req.query.bedrooms) };
+    }
+
+    // Filter by location
+    if (req.query.location) {
+      whereClause.location = { [Op.iLike]: `%${req.query.location}%` };
+    }
+
+    // Search by keyword
+    if (req.query.keyword) {
+      whereClause[Op.or] = [
+        { title: { [Op.iLike]: `%${req.query.keyword}%` } },
+        { description: { [Op.iLike]: `%${req.query.keyword}%` } },
+        { location: { [Op.iLike]: `%${req.query.keyword}%` } },
+      ];
+    }
+
+    // Get properties with pagination and count
+    const { count, rows: properties } = await Property.findAndCountAll({
+      where: whereClause,
+      include: [
+        {
+          model: User,
+          as: 'agent',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'avatar'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+      limit: pageSize,
+      offset: pageSize * (page - 1),
+    });
+
+    res.json({
+      success: true,
+      properties,
+      page,
+      pages: Math.ceil(count / pageSize),
+      total: count,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error',
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getProperties,
   getFeaturedProperties,
@@ -512,4 +615,5 @@ module.exports = {
   updateProperty,
   deleteProperty,
   getAgentProperties,
+  getOffPlanProperties,
 };

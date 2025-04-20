@@ -15,6 +15,8 @@ export interface Property {
   zipCode?: string;
   propertyType: string;
   status: string;
+
+  isOffplan?: boolean;
   bedrooms: number;
   bathrooms: number;
   area: number;
@@ -39,8 +41,12 @@ export interface PropertyFilter {
   page?: number;
   type?: string;
   status?: string;
+
+  isOffplan?: boolean;
   minPrice?: number;
   maxPrice?: number;
+  minArea?: number;
+  maxArea?: number;
   bedrooms?: number;
   bathrooms?: number;
   location?: string;

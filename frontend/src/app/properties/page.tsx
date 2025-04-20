@@ -90,6 +90,8 @@ export default function PropertiesPage() {
     location: searchParams.get('location') || '',
     minPrice: searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined,
     maxPrice: searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined,
+    minArea: searchParams.get('minArea') ? Number(searchParams.get('minArea')) : undefined,
+    maxArea: searchParams.get('maxArea') ? Number(searchParams.get('maxArea')) : undefined,
     bedrooms: searchParams.get('bedrooms') ? Number(searchParams.get('bedrooms')) : undefined,
     bathrooms: searchParams.get('bathrooms') ? Number(searchParams.get('bathrooms')) : undefined,
     keyword: searchParams.get('keyword') || '',
@@ -123,11 +125,6 @@ export default function PropertiesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Handle search input
-  const handleSearch = (query: string) => {
-    setFilters({ ...filters, keyword: query, page: 1 });
-  };
-
   // Handle filter changes
   const handleFilterChange = (newFilters: PropertyFilter) => {
     setFilters(newFilters);
@@ -154,23 +151,25 @@ export default function PropertiesPage() {
         </p>
       </div>
 
-      {/* Search Bar */}
-      <div className="mb-8">
-        <SearchInput
-          placeholder="Search by location, property name, or keywords..."
-          initialValue={filters.keyword || ''}
-          onSearch={handleSearch}
-          className="py-3 text-gray-700 placeholder-gray-500"
-        />
+      {/* Search and Filters */}
+      <div className="mb-8 flex flex-col space-y-2">
+        <div className="w-full">
+          <SearchInput
+            placeholder="Area, project or community"
+            initialValue={filters.keyword || ''}
+            onSearch={(query) => setFilters({ ...filters, keyword: query, page: 1 })}
+            className="py-2 text-gray-700 placeholder-gray-500"
+          />
+        </div>
+        <div className="w-full">
+          <AdvancedFilters
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onApplyFilters={applyFilters}
+            className=""
+          />
+        </div>
       </div>
-
-      {/* Advanced Filters */}
-      <AdvancedFilters
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onApplyFilters={applyFilters}
-        className="mb-8"
-      />
 
       {/* Property Grid */}
       {loading ? (
