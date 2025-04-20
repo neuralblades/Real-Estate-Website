@@ -51,6 +51,7 @@ export interface PropertyFilter {
   bathrooms?: number;
   location?: string;
   keyword?: string;
+  yearBuilt?: number;
 }
 
 // Get all properties with filtering

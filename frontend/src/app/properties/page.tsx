@@ -94,6 +94,7 @@ export default function PropertiesPage() {
     maxArea: searchParams.get('maxArea') ? Number(searchParams.get('maxArea')) : undefined,
     bedrooms: searchParams.get('bedrooms') ? Number(searchParams.get('bedrooms')) : undefined,
     bathrooms: searchParams.get('bathrooms') ? Number(searchParams.get('bathrooms')) : undefined,
+    yearBuilt: searchParams.get('yearBuilt') ? Number(searchParams.get('yearBuilt')) : undefined,
     keyword: searchParams.get('keyword') || '',
   });
 

@@ -66,6 +66,11 @@ const getProperties = async (req, res) => {
       whereClause.location = { [Op.iLike]: `%${req.query.location}%` };
     }
 
+    // Filter by year built
+    if (req.query.yearBuilt) {
+      whereClause.yearBuilt = Number(req.query.yearBuilt);
+    }
+
     // Search by keyword
     if (req.query.keyword) {
       whereClause[Op.or] = [

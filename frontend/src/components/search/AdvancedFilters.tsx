@@ -121,6 +121,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
       maxPrice: undefined,
       bedrooms: undefined,
       bathrooms: undefined,
+      yearBuilt: undefined,
       keyword: filters.keyword, // Preserve search keyword
     });
   };
@@ -190,16 +191,16 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             </select>
           </div>
 
-          {/* Size Filter */}
+          {/* Status Filter */}
           <div className="min-w-[100px]">
             <select
-              id="size"
+              id="status"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 appearance-none bg-white"
-              value={filters.bathrooms?.toString() || ''}
+              value={filters.status || ''}
               onChange={handleFilterChange}
             >
-              <option value="">Size</option>
-              {bathroomOptions.map((option) => (
+              <option value="">Status</option>
+              {statusOptions.map((option) => (
                 option.value && (
                   <option key={option.value} value={option.value}>
                     {option.label}
@@ -286,26 +287,24 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 </select>
               </div>
 
-              {/* Status Filter */}
+              {/* Year Built Filter */}
               <div>
-                <label htmlFor="status" className="block text-gray-700 text-sm font-medium mb-2">
-                  Status
+                <label htmlFor="year-built" className="block text-gray-700 text-sm font-medium mb-2">
+                  Year Built
                 </label>
-                <select
-                  id="status"
+                <input
+                  type="number"
+                  id="year-built"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 bg-white"
-                  value={filters.status || ''}
-                  onChange={handleFilterChange}
-                >
-                  <option value="">Any Status</option>
-                  {statusOptions.map((option) => (
-                    option.value && (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    )
-                  ))}
-                </select>
+                  placeholder="e.g. 2020"
+                  min="1900"
+                  max={new Date().getFullYear()}
+                  value={filters.yearBuilt || ''}
+                  onChange={(e) => {
+                    const value = e.target.value ? Number(e.target.value) : undefined;
+                    onFilterChange({ ...filters, yearBuilt: value, page: 1 });
+                  }}
+                />
               </div>
             </div>
 
