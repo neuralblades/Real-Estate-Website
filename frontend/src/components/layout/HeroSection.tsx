@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import SearchInput from '@/components/search/SearchInput';
 import { PropertyFilter } from '@/services/propertyService';
 
+
 const HeroSection = () => {
   const router = useRouter();
   const [filters, setFilters] = useState<PropertyFilter>({
@@ -53,44 +54,53 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-y-0 left-0 w-1/2 bg-white/5"></div>
-        <div className="absolute top-0 right-0 w-full h-1/2 bg-white/5 transform -skew-y-6"></div>
+    <div className="relative text-white overflow-hidden">
+      {/* Video Background */}
+      <div className="absolute inset-0 w-full h-full z-0">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/videos/home0.webm" type="video/webm" />
+          {/* Fallback for browsers that don't support webm */}
+          Your browser does not support the video tag.
+        </video>
+        {/* Overlay to make text more readable */}
+        <div className="absolute inset-0 bg-black/30"></div>
       </div>
 
       <div className="container mx-auto px-4 py-20 md:py-32 relative z-10">
         <div className="max-w-3xl">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Find Your Dream Luxury Property
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-shadow-lg">
+            Find your home in Dubai.
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-blue-100">
+          <p className="text-xl md:text-2xl mb-8 text-gray-400 text-shadow-md">
             Discover exclusive properties in the most desirable locations worldwide.
           </p>
 
           {/* Search Form */}
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-2xl">
+          <div className="p-6 rounded-lg max-w-2xl">
             <form onSubmit={handleSearch}>
               {/* Search Input with Autocomplete */}
               <div className="mb-6">
-                <label htmlFor="search" className="block text-gray-700 text-sm font-medium mb-2">
-                  Search Properties
-                </label>
                 <SearchInput
-                  placeholder="Enter location, property name, or keywords..."
-                  className="text-gray-700 placeholder-gray-500"
+                  placeholder="Area, project or community"
+                  className="w-full px-4 py-3 text-gray-700 placeholder-gray-500 bg-white/90 rounded-md"
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Filters - Only visible on tablets and desktop */}
+              <div className="hidden md:grid md:grid-cols-3 gap-4">
                 <div>
-                  <label htmlFor="location" className="block text-gray-700 text-sm font-medium mb-2">
+                  <label htmlFor="location" className="block text-white text-sm font-medium mb-2">
                     Location
                   </label>
                   <select
                     id="location"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                    className="w-full px-4 py-2 bg-white/90 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
                     value={filters.location}
                     onChange={handleFilterChange}
                   >
@@ -104,12 +114,12 @@ const HeroSection = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="property-type" className="block text-gray-700 text-sm font-medium mb-2">
+                  <label htmlFor="property-type" className="block text-white text-sm font-medium mb-2">
                     Property Type
                   </label>
                   <select
                     id="property-type"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                    className="w-full px-4 py-2 bg-white/90 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
                     value={filters.type}
                     onChange={handleFilterChange}
                   >
@@ -123,12 +133,12 @@ const HeroSection = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="price-range" className="block text-gray-700 text-sm font-medium mb-2">
+                  <label htmlFor="price-range" className="block text-white text-sm font-medium mb-2">
                     Price Range
                   </label>
                   <select
                     id="price-range"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                    className="w-full px-4 py-2 bg-white/90 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
                     value={
                       filters.minPrice !== undefined && filters.maxPrice !== undefined
                         ? `${filters.minPrice}-${filters.maxPrice}`
@@ -148,12 +158,17 @@ const HeroSection = () => {
               <div className="mt-6">
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition duration-300 inline-block text-center"
+                  className="w-full bg-orange-500 text-white py-3 px-4 rounded-md font-medium hover:bg-orange-600 transition duration-300 inline-block text-center"
                 >
                   Search Properties
                 </button>
               </div>
             </form>
+          </div>
+
+          {/* Stats */}
+          <div className="mt-8 pl-6 text-md text-white/90 font-medium">
+            <p>1,000+ listings · 100+ agents · Serving Exclusive Properties</p>
           </div>
         </div>
       </div>
