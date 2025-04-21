@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import PropertyCard from '@/components/properties/PropertyCard';
 import SearchInput from '@/components/search/SearchInput';
 import AdvancedFilters from '@/components/search/AdvancedFilters';
+import Link from 'next/link';
 import { getProperties, PropertyFilter, Property } from '@/services/propertyService';
 
 // Fallback data for properties
@@ -96,6 +97,7 @@ export default function PropertiesPage() {
     bathrooms: searchParams.get('bathrooms') ? Number(searchParams.get('bathrooms')) : undefined,
     yearBuilt: searchParams.get('yearBuilt') ? Number(searchParams.get('yearBuilt')) : undefined,
     keyword: searchParams.get('keyword') || '',
+    isOffplan: false, // Explicitly exclude offplan properties
   });
 
   // Fetch properties with current filters
@@ -128,7 +130,8 @@ export default function PropertiesPage() {
 
   // Handle filter changes
   const handleFilterChange = (newFilters: PropertyFilter) => {
-    setFilters(newFilters);
+    // Always maintain isOffplan: false to exclude offplan properties
+    setFilters({ ...newFilters, isOffplan: false });
   };
 
   // Apply filters
@@ -139,17 +142,40 @@ export default function PropertiesPage() {
   // Handle pagination
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
-    setFilters({ ...filters, page });
+    setFilters({ ...filters, page, isOffplan: false });
     fetchProperties();
   };
 
   return (
     <div className="container mx-auto px-4 py-12">
+      {/* Breadcrumbs */}
+      <div className="mb-6">
+        <nav className="flex text-gray-600 text-sm">
+          <Link href="/" className="hover:text-blue-600 transition duration-300">Home</Link>
+          <span className="mx-2">/</span>
+          <Link href="/properties" className="hover:text-blue-600 transition duration-300">Properties</Link>
+          <span className="mx-2">/</span>
+        </nav>
+      </div>
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Browse Properties</h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 mb-4">
           Explore our collection of premium properties in the most desirable locations.
         </p>
+        <div className="flex space-x-4">
+          <Link
+            href="/properties"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
+          >
+            Ready Properties
+          </Link>
+          <Link
+            href="/properties/offplan"
+            className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition duration-300"
+          >
+            Off Plan Properties
+          </Link>
+        </div>
       </div>
 
       {/* Search and Filters */}
@@ -158,7 +184,7 @@ export default function PropertiesPage() {
           <SearchInput
             placeholder="Area, project or community"
             initialValue={filters.keyword || ''}
-            onSearch={(query) => setFilters({ ...filters, keyword: query, page: 1 })}
+            onSearch={(query) => setFilters({ ...filters, keyword: query, page: 1, isOffplan: false })}
             className="py-2 text-gray-700 placeholder-gray-500"
           />
         </div>

@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createProperty, updateProperty, getPropertyById } from '@/services/propertyService';
+import { getDevelopers } from '@/services/developerService';
 import { getFullImageUrl } from '@/utils/imageUtils';
 
 interface PropertyFormProps {
@@ -19,6 +20,7 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [developers, setDevelopers] = useState<any[]>([]);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -33,6 +35,7 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
     propertyType: 'house',
     status: 'for-sale',
     isOffplan: false,
+    developerId: '',
     bedrooms: '',
     bathrooms: '',
     area: '',
@@ -61,6 +64,20 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
 
   // Fetch property data if in edit mode
   useEffect(() => {
+    // Fetch developers list
+    const fetchDevelopers = async () => {
+      try {
+        const response = await getDevelopers();
+        if (response.success && response.developers) {
+          setDevelopers(response.developers);
+        }
+      } catch (error) {
+        console.error('Error fetching developers:', error);
+      }
+    };
+
+    fetchDevelopers();
+
     if (isEdit && propertyId) {
       const fetchPropertyData = async () => {
         setLoading(true);
@@ -68,6 +85,16 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
           const response = await getPropertyById(propertyId);
           if (response.success && response.property) {
             const property = response.property;
+
+            // Check if it's an offplan property and redirect if needed
+            if (property.isOffplan) {
+              // Show message and redirect to offplan property edit form
+              setError('This is an offplan property. Redirecting to offplan property edit form.');
+              setTimeout(() => {
+                router.push(`/admin/properties/edit-offplan/${propertyId}`);
+              }, 1500);
+              return;
+            }
 
             // Set form data
             setFormData({
@@ -82,6 +109,7 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
               propertyType: property.propertyType || 'house',
               status: property.status || 'for-sale',
               isOffplan: property.isOffplan || false,
+              developerId: property.developer?.id || '',
               bedrooms: property.bedrooms?.toString() || '',
               bathrooms: property.bathrooms?.toString() || '',
               area: property.area?.toString() || '',
@@ -439,6 +467,28 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
               Off Plan Property
             </label>
           </div>
+
+          {formData.isOffplan && (
+            <div>
+              <label htmlFor="developerId" className="block text-sm font-medium text-gray-700 mb-1">
+                Developer
+              </label>
+              <select
+                id="developerId"
+                name="developerId"
+                value={formData.developerId}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select a Developer</option>
+                {developers.map((developer) => (
+                  <option key={developer.id} value={developer.id}>
+                    {developer.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div>
             <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-1">

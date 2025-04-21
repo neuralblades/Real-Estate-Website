@@ -113,6 +113,19 @@ export default function AdminLayout({
             </li>
             <li>
               <Link
+                href="/admin/developers"
+                className={`flex items-center py-3 px-4 ${
+                  pathname.startsWith('/admin/developers') ? 'bg-blue-700' : 'hover:bg-gray-800'
+                } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                {isSidebarOpen && <span className="ml-3">Developers</span>}
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/admin/users"
                 className={`flex items-center py-3 px-4 ${
                   pathname.startsWith('/admin/users') ? 'bg-blue-700' : 'hover:bg-gray-800'
@@ -193,6 +206,7 @@ export default function AdminLayout({
               <h2 className="text-xl font-semibold text-gray-800">
                 {pathname === '/admin/dashboard' && 'Dashboard'}
                 {pathname.startsWith('/admin/properties') && 'Properties Management'}
+                {pathname.startsWith('/admin/developers') && 'Developers Management'}
                 {pathname.startsWith('/admin/users') && 'User Management'}
                 {pathname === '/admin/inquiries' && 'Property Inquiries'}
                 {pathname === '/admin/general-inquiries' && 'Chatbot Inquiries'}

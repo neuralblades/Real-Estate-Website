@@ -31,8 +31,15 @@ export interface Property {
     phone: string;
     avatar: string;
   };
+  developer?: {
+    id: string;
+    name: string;
+    logo?: string;
+    slug: string;
+  };
   featured: boolean;
   yearBuilt?: number;
+  paymentPlan?: string;
   createdAt: string;
   updatedAt: string;
 }

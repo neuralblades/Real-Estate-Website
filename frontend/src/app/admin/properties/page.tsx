@@ -16,6 +16,7 @@ interface Property {
   propertyType: string;
   status: string;
   featured: boolean;
+  isOffplan?: boolean;
   createdAt: string;
 }
 
@@ -100,15 +101,23 @@ export default function AdminPropertiesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Add Property Button */}
+      {/* Header with Add Property Buttons */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Properties Management</h1>
-        <Link
-          href="/admin/properties/add"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
-        >
-          Add New Property
-        </Link>
+        <div className="flex space-x-4">
+          <Link
+            href="/admin/properties/add-offplan"
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300"
+          >
+            Add Offplan Property
+          </Link>
+          <Link
+            href="/admin/properties/add"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
+          >
+            Add Regular Property
+          </Link>
+        </div>
       </div>
 
       {/* Filters and Search */}
@@ -189,6 +198,9 @@ export default function AdminPropertiesPage() {
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Category
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Featured
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -245,6 +257,17 @@ export default function AdminPropertiesPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
+                      {property.isOffplan ? (
+                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                          Off Plan
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                          Regular
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       {property.featured ? (
                         <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
                           Featured
@@ -257,12 +280,21 @@ export default function AdminPropertiesPage() {
                       {new Date(property.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link
-                        href={`/admin/properties/edit/${property.id}`}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                      >
-                        Edit
-                      </Link>
+                      {property.isOffplan ? (
+                        <Link
+                          href={`/admin/properties/edit-offplan/${property.id}`}
+                          className="text-blue-600 hover:text-blue-900 mr-4"
+                        >
+                          Edit
+                        </Link>
+                      ) : (
+                        <Link
+                          href={`/admin/properties/edit/${property.id}`}
+                          className="text-blue-600 hover:text-blue-900 mr-4"
+                        >
+                          Edit
+                        </Link>
+                      )}
                       <button
                         onClick={() => handleDeleteClick(property)}
                         className="text-red-600 hover:text-red-900"

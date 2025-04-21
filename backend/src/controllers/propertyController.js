@@ -1,4 +1,4 @@
-const { Property, User } = require('../models');
+const { Property, User, Developer } = require('../models');
 const { Op } = require('sequelize');
 
 // @desc    Get all properties with filtering
@@ -89,6 +89,11 @@ const getProperties = async (req, res) => {
           as: 'agent',
           attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'avatar'],
         },
+        {
+          model: Developer,
+          as: 'developer',
+          attributes: ['id', 'name', 'logo', 'slug'],
+        },
       ],
       order: [['createdAt', 'DESC']],
       limit: pageSize,
@@ -124,6 +129,11 @@ const getFeaturedProperties = async (req, res) => {
           model: User,
           as: 'agent',
           attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'avatar'],
+        },
+        {
+          model: Developer,
+          as: 'developer',
+          attributes: ['id', 'name', 'logo', 'slug'],
         },
       ],
       limit: 6,
@@ -163,6 +173,11 @@ const getPropertyById = async (req, res) => {
           model: User,
           as: 'agent',
           attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'avatar'],
+        },
+        {
+          model: Developer,
+          as: 'developer',
+          attributes: ['id', 'name', 'description', 'logo', 'website', 'established', 'headquarters', 'slug'],
         },
       ],
     });
@@ -215,15 +230,27 @@ const createProperty = async (req, res) => {
       area,
       features,
       yearBuilt,
+      paymentPlan,
     } = req.body;
 
     // Process images
     let images = [];
     let mainImage = '';
+    let headerImage = '';
 
-    if (req.files && req.files.length > 0) {
-      images = req.files.map((file) => `/uploads/${file.filename}`);
-      mainImage = images[0]; // Set first image as main image
+    if (req.files) {
+      // With upload.fields(), files are organized by field name
+      // Process header image if available
+      if (req.files.headerImage && req.files.headerImage.length > 0) {
+        const headerImageFile = req.files.headerImage[0];
+        headerImage = `/uploads/${headerImageFile.filename}`;
+      }
+
+      // Process regular images if available
+      if (req.files.images && req.files.images.length > 0) {
+        images = req.files.images.map((file) => `/uploads/${file.filename}`);
+        mainImage = images[0]; // Set first image as main image
+      }
     }
 
     // Parse features if it's a string
@@ -249,12 +276,15 @@ const createProperty = async (req, res) => {
       propertyType,
       status,
       isOffplan: req.body.isOffplan === 'true' || req.body.isOffplan === true,
+      developerId: req.body.developerId || null,
       bedrooms,
       bathrooms,
       area,
       features: parsedFeatures,
       images,
       mainImage,
+      headerImage, // Add header image
+      paymentPlan, // Add payment plan
       agentId: req.user.id,
       yearBuilt,
       featured: false,
@@ -267,6 +297,11 @@ const createProperty = async (req, res) => {
           model: User,
           as: 'agent',
           attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'avatar'],
+        },
+        {
+          model: Developer,
+          as: 'developer',
+          attributes: ['id', 'name', 'logo', 'slug'],
         },
       ],
     });
@@ -336,6 +371,7 @@ const updateProperty = async (req, res) => {
       area,
       features,
       yearBuilt,
+      paymentPlan,
       featured,
       existingImages,
     } = req.body;
@@ -359,6 +395,11 @@ const updateProperty = async (req, res) => {
     if (req.body.isOffplan !== undefined) {
       updateData.isOffplan = req.body.isOffplan === 'true' || req.body.isOffplan === true;
     }
+
+    // Update developer if provided
+    if (req.body.developerId) {
+      updateData.developerId = req.body.developerId;
+    }
     if (bedrooms) updateData.bedrooms = bedrooms;
     if (bathrooms) updateData.bathrooms = bathrooms;
     if (area) updateData.area = area;
@@ -377,6 +418,7 @@ const updateProperty = async (req, res) => {
     }
 
     if (yearBuilt) updateData.yearBuilt = yearBuilt;
+    if (paymentPlan) updateData.paymentPlan = paymentPlan;
     if (featured !== undefined && req.user.role === 'admin') {
       updateData.featured = featured === 'true' || featured === true;
     }
@@ -400,20 +442,30 @@ const updateProperty = async (req, res) => {
     }
 
     // Process new images
-    if (req.files && req.files.length > 0) {
-      const newImages = req.files.map((file) => `/uploads/${file.filename}`);
-
-      // If existingImages was provided, add new images to the parsed array
-      if (updateData.images) {
-        updateData.images = [...updateData.images, ...newImages];
-      } else {
-        // Otherwise, add new images to existing images from the database
-        updateData.images = [...(property.images || []), ...newImages];
+    if (req.files) {
+      // With upload.fields(), files are organized by field name
+      // Process header image if available
+      if (req.files.headerImage && req.files.headerImage.length > 0) {
+        const headerImageFile = req.files.headerImage[0];
+        updateData.headerImage = `/uploads/${headerImageFile.filename}`;
       }
 
-      // If no main image, set first image as main
-      if ((!property.mainImage || updateData.mainImage === null) && updateData.images.length > 0) {
-        updateData.mainImage = updateData.images[0];
+      // Process regular images if available
+      if (req.files.images && req.files.images.length > 0) {
+        const newImages = req.files.images.map((file) => `/uploads/${file.filename}`);
+
+        // If existingImages was provided, add new images to the parsed array
+        if (updateData.images) {
+          updateData.images = [...updateData.images, ...newImages];
+        } else {
+          // Otherwise, add new images to existing images from the database
+          updateData.images = [...(property.images || []), ...newImages];
+        }
+
+        // If no main image, set first image as main
+        if ((!property.mainImage || updateData.mainImage === null) && updateData.images.length > 0) {
+          updateData.mainImage = updateData.images[0];
+        }
       }
     }
 
@@ -427,6 +479,11 @@ const updateProperty = async (req, res) => {
           model: User,
           as: 'agent',
           attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'avatar'],
+        },
+        {
+          model: Developer,
+          as: 'developer',
+          attributes: ['id', 'name', 'logo', 'slug'],
         },
       ],
     });
@@ -517,6 +574,11 @@ const getAgentProperties = async (req, res) => {
           as: 'agent',
           attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'avatar'],
         },
+        {
+          model: Developer,
+          as: 'developer',
+          attributes: ['id', 'name', 'logo', 'slug'],
+        },
       ],
     });
 
@@ -588,6 +650,11 @@ const getOffPlanProperties = async (req, res) => {
           model: User,
           as: 'agent',
           attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'avatar'],
+        },
+        {
+          model: Developer,
+          as: 'developer',
+          attributes: ['id', 'name', 'logo', 'slug'],
         },
       ],
       order: [['createdAt', 'DESC']],

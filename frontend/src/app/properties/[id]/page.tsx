@@ -285,13 +285,6 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
         </nav>
       </div>
 
-      {/* Property Title and Price */}
-      <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{property.title}</h1>
-        <p className="text-gray-600 text-lg mb-4">{property.location}</p>
-        <p className="text-3xl font-bold text-blue-600">${property.price.toLocaleString()}</p>
-      </div>
-
       {/* Property Images */}
       <div className="mb-12">
         <div className="grid grid-cols-12 gap-4">
@@ -358,6 +351,12 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
         {/* Property Details */}
         <div className="lg:col-span-2">
           {/* Overview */}
+          {/* Property Title and Price */}
+          <div className="mb-8">
+            <p className="text-5xl font-bold text-blue-600 mb-2">${property.price.toLocaleString()}</p>
+            <h1 className="text-xl md:text-4xl font-bold text-gray-900 mb-2">{property.title}</h1>
+            <p className="text-gray-600 text-lg">{property.location}</p>
+          </div>
           <div className="bg-white p-6 rounded-lg shadow-md mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Overview</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -479,6 +478,43 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
         {/* Contact Form and Agent Info - Fixed on scroll */}
         <div className="lg:sticky lg:top-15 lg:self-start h-fit">
           <div className="space-y-8">
+          {/* Developer Info (if available) */}
+          {property.developer && (
+            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Developer</h2>
+              <div className="flex items-center mb-4">
+                {property.developer.logo ? (
+                  <div className="relative h-16 w-16 overflow-hidden mr-4">
+                    <Image
+                      src={getFullImageUrl(property.developer.logo)}
+                      alt={property.developer.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 64px"
+                      className="object-contain"
+                      unoptimized
+                    />
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-16 w-16 bg-gray-100 mr-4 rounded">
+                    <span className="text-2xl font-bold text-gray-400">{property.developer.name.charAt(0)}</span>
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">{property.developer.name}</h3>
+                </div>
+              </div>
+              <Link
+                href={`/developers/${property.developer.slug}`}
+                className="flex items-center text-blue-600 hover:text-blue-800 transition duration-300 font-medium"
+              >
+                View All Projects
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          )}
+
           {/* Agent Info */}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Listed By</h2>

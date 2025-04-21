@@ -7,6 +7,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Chatbot from "@/components/chatbot/Chatbot";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ToastProvider } from "@/contexts/ToastContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,14 +32,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <AuthProvider>
-          <Header />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-          <div className="global-chatbot">
-            <Chatbot />
-          </div>
+          <ToastProvider>
+            <Header />
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
+            <div className="global-chatbot">
+              <Chatbot />
+            </div>
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>

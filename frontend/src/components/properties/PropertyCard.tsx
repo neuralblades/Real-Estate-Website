@@ -14,6 +14,7 @@ interface PropertyCardProps {
   area: number;
   imageUrl: string;
   featured?: boolean;
+  isOffplan?: boolean;
   agent?: {
     id: string;
     firstName: string;
@@ -34,10 +35,11 @@ const PropertyCard = ({
   area,
   imageUrl,
   featured = false,
+  isOffplan = false,
 }: PropertyCardProps) => {
   return (
     <div className={`bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-xl ${featured ? 'transform hover:-translate-y-2' : 'hover:-translate-y-1'}`}>
-      <Link href={`/properties/${id}`}>
+      <Link href={isOffplan ? `/properties/offplan/${id}` : `/properties/${id}`}>
         <div className="relative h-64 w-full">
           <Image
             src={getFullImageUrl(imageUrl)}
@@ -47,16 +49,23 @@ const PropertyCard = ({
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             unoptimized
           />
-          {featured && (
-            <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-              Featured
-            </div>
-          )}
+          <div className="absolute top-4 left-4 flex flex-col space-y-2">
+            {featured && (
+              <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                Featured
+              </div>
+            )}
+            {isOffplan && (
+              <div className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                Off Plan
+              </div>
+            )}
+          </div>
         </div>
       </Link>
 
       <div className="p-5">
-        <Link href={`/properties/${id}`}>
+        <Link href={isOffplan ? `/properties/offplan/${id}` : `/properties/${id}`}>
           <h3 className="text-xl font-bold text-gray-800 mb-2 hover:text-blue-600 transition duration-300">{title}</h3>
         </Link>
 

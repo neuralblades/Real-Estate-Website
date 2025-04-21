@@ -51,9 +51,15 @@ router.get('/offplan', getOffPlanProperties);
 router.get('/agent/:id', getAgentProperties);
 router.get('/:id', getPropertyById);
 
+// Configure multer to accept multiple fields
+const uploadFields = upload.fields([
+  { name: 'images', maxCount: 10 },
+  { name: 'headerImage', maxCount: 1 }
+]);
+
 // Protected routes
-router.post('/', protect, agent, upload.array('images', 10), createProperty);
-router.put('/:id', protect, agent, upload.array('images', 10), updateProperty);
+router.post('/', protect, agent, uploadFields, createProperty);
+router.put('/:id', protect, agent, uploadFields, updateProperty);
 router.delete('/:id', protect, agent, deleteProperty);
 
 module.exports = router;

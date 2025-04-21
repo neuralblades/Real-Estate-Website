@@ -48,6 +48,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: false,
     },
+    developerId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'developers',
+        key: 'id',
+      },
+    },
     bedrooms: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -74,6 +82,13 @@ module.exports = (sequelize, DataTypes) => {
     mainImage: {
       type: DataTypes.STRING,
     },
+    headerImage: {
+      type: DataTypes.STRING,
+    },
+    paymentPlan: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     featured: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -88,6 +103,10 @@ module.exports = (sequelize, DataTypes) => {
     Property.belongsTo(models.User, {
       foreignKey: 'agentId',
       as: 'agent',
+    });
+    Property.belongsTo(models.Developer, {
+      foreignKey: 'developerId',
+      as: 'developer',
     });
     Property.hasMany(models.Inquiry, {
       foreignKey: 'propertyId',

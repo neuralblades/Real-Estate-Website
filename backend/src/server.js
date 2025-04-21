@@ -47,12 +47,14 @@ const userRoutes = require('./routes/userRoutes');
 const inquiryRoutes = require('./routes/inquiryRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const contactRoutes = require('./routes/contactRoutes');
+const developerRoutes = require('./routes/developerRoutes');
 
 app.use('/api/properties', propertyRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/developers', developerRoutes);
 
 // Root route
 app.get('/', (req, res) => {
