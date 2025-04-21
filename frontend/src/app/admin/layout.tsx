@@ -176,6 +176,19 @@ export default function AdminLayout({
                 {isSidebarOpen && <span className="ml-3">Contact Submissions</span>}
               </Link>
             </li>
+            <li>
+              <Link
+                href="/admin/document-requests"
+                className={`flex items-center py-3 px-4 ${
+                  pathname === '/admin/document-requests' ? 'bg-blue-700' : 'hover:bg-gray-800'
+                } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {isSidebarOpen && <span className="ml-3">Document Requests</span>}
+              </Link>
+            </li>
           </ul>
         </nav>
         <div className="absolute bottom-0 p-4">
@@ -211,6 +224,7 @@ export default function AdminLayout({
                 {pathname === '/admin/inquiries' && 'Property Inquiries'}
                 {pathname === '/admin/general-inquiries' && 'Chatbot Inquiries'}
                 {pathname === '/admin/contact-submissions' && 'Contact Submissions'}
+                {pathname === '/admin/document-requests' && 'Document Requests'}
               </h2>
             </div>
             <div className="flex items-center">
