@@ -25,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, '../uploads');
+const blogUploadsDir = path.join(__dirname, '../uploads/blog');
 if (!fs.existsSync(uploadsDir)) {
   console.log('Creating uploads directory...');
   try {
@@ -32,6 +33,17 @@ if (!fs.existsSync(uploadsDir)) {
     console.log('Uploads directory created successfully');
   } catch (err) {
     console.error('Error creating uploads directory:', err);
+  }
+}
+
+// Ensure blog uploads directory exists
+if (!fs.existsSync(blogUploadsDir)) {
+  console.log('Creating blog uploads directory...');
+  try {
+    fs.mkdirSync(blogUploadsDir, { recursive: true });
+    console.log('Blog uploads directory created successfully');
+  } catch (err) {
+    console.error('Error creating blog uploads directory:', err);
   }
 }
 
@@ -72,6 +84,7 @@ const contactRoutes = require('./routes/contactRoutes');
 const developerRoutes = require('./routes/developerRoutes');
 const documentRequestRoutes = require('./routes/documentRequestRoutes');
 const offplanInquiryRoutes = require('./routes/offplanInquiryRoutes');
+const blogRoutes = require('./routes/blogRoutes');
 
 app.use('/api/properties', propertyRoutes);
 app.use('/api/users', userRoutes);
@@ -81,6 +94,7 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/developers', developerRoutes);
 app.use('/api/document-requests', documentRequestRoutes);
 app.use('/api/offplan-inquiries', offplanInquiryRoutes);
+app.use('/api/blog', blogRoutes);
 
 // Root route
 app.get('/', (req, res) => {

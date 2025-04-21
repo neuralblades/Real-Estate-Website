@@ -11,11 +11,8 @@ const protect = async (req, res, next) => {
       // Get token from header
       token = req.headers.authorization.split(' ')[1];
 
-      console.log('Token received:', token ? 'Token present' : 'No token');
-
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key');
-      console.log('Token decoded successfully:', decoded);
 
       // Get user from token
       req.user = await User.findByPk(decoded.id, {
@@ -29,8 +26,6 @@ const protect = async (req, res, next) => {
           message: 'Not authorized, user not found',
         });
       }
-
-      console.log('User authenticated:', req.user.id, req.user.role);
       next();
     } catch (error) {
       console.error('Token verification failed:', error.message);

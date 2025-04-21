@@ -18,7 +18,7 @@ import { getDeveloperById, Developer } from '@/services/developerService';
 import { getFullImageUrl } from '@/utils/imageUtils';
 import { Dialog, Transition } from '@headlessui/react';
 import MapComponent from '@/components/Map';
-import * as Tabs from '@headlessui/react';
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import ContactFormPopup from '@/components/ContactFormPopup';
 
 // Client component wrapper
@@ -200,8 +200,8 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
             priority
             unoptimized
           />
-          {/* Modern Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/60 to-black/90"></div>
+          {/* Modern Gradient Overlay - Enhanced for better text visibility */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/70 to-black/90"></div>
         </div>
 
         {/* Breadcrumbs with Frosted Glass Effect */}
@@ -235,7 +235,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
               </div>
 
               {/* Property Title with Animation */}
-              <h1 className="text-5xl md:text-7xl font-bold mb-4 leading-tight">{property.title}</h1>
+              <h1 className="text-5xl md:text-7xl font-bold mb-4 leading-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{property.title}</h1>
 
               {/* Location with Icon */}
               <div className="flex items-center text-white/90 mb-6">
@@ -355,15 +355,15 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x">
             <div className="flex flex-col p-8 hover:bg-gray-50 transition-colors duration-300">
               <h3 className="text-sm uppercase text-gray-500 mb-2 tracking-wider font-medium">STARTING PRICE</h3>
-              <p className="text-4xl font-bold text-blue-900">AED {property.price.toLocaleString()}</p>
+              <p className="text-4xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">AED {property.price.toLocaleString()}</p>
             </div>
             <div className="flex flex-col p-8 hover:bg-gray-50 transition-colors duration-300">
               <h3 className="text-sm uppercase text-gray-500 mb-2 tracking-wider font-medium">HANDOVER</h3>
-              <p className="text-4xl font-semibold text-blue-900">{property.yearBuilt}</p>
+              <p className="text-4xl font-semibold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">{property.yearBuilt}</p>
             </div>
             <div className="flex flex-col p-8 hover:bg-gray-50 transition-colors duration-300">
               <h3 className="text-sm uppercase text-gray-500 mb-2 tracking-wider font-medium">PAYMENT PLAN</h3>
-              <p className="text-4xl font-semibold text-blue-900">{property.paymentPlan || '70/30'}</p>
+              <p className="text-4xl font-semibold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">{property.paymentPlan || '70/30'}</p>
             </div>
           </div>
         </div>
@@ -375,10 +375,10 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
           {/* Project Details */}
           <div className="w-full">
             {/* Tabs Navigation */}
-            <Tabs.Tab.Group>
+            <TabGroup>
               <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
-                <Tabs.Tab.List className="flex overflow-x-auto scrollbar-hide">
-                  <Tabs.Tab className={({ selected }: { selected: boolean }) =>
+                <TabList className="flex overflow-x-auto scrollbar-hide">
+                  <Tab className={({ selected }) =>
                     `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
@@ -387,8 +387,8 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </svg>
                       Details
                     </div>
-                  </Tabs.Tab>
-                  <Tabs.Tab className={({ selected }: { selected: boolean }) =>
+                  </Tab>
+                  <Tab className={({ selected }) =>
                     `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
@@ -397,8 +397,8 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </svg>
                       Gallery
                     </div>
-                  </Tabs.Tab>
-                  <Tabs.Tab className={({ selected }: { selected: boolean }) =>
+                  </Tab>
+                  <Tab className={({ selected }) =>
                     `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
@@ -407,8 +407,8 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </svg>
                       Floor Plans
                     </div>
-                  </Tabs.Tab>
-                  <Tabs.Tab className={({ selected }: { selected: boolean }) =>
+                  </Tab>
+                  <Tab className={({ selected }) =>
                     `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
@@ -417,8 +417,8 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </svg>
                       Amenities
                     </div>
-                  </Tabs.Tab>
-                  <Tabs.Tab className={({ selected }: { selected: boolean }) =>
+                  </Tab>
+                  <Tab className={({ selected }) =>
                     `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
@@ -428,8 +428,8 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </svg>
                       Location
                     </div>
-                  </Tabs.Tab>
-                  <Tabs.Tab className={({ selected }: { selected: boolean }) =>
+                  </Tab>
+                  <Tab className={({ selected }) =>
                     `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
@@ -438,8 +438,8 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </svg>
                       Payment Plans
                     </div>
-                  </Tabs.Tab>
-                  <Tabs.Tab className={({ selected }: { selected: boolean }) =>
+                  </Tab>
+                  <Tab className={({ selected }) =>
                     `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
@@ -448,27 +448,31 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </svg>
                       Brochure
                     </div>
-                  </Tabs.Tab>
-                </Tabs.Tab.List>
+                  </Tab>
+                </TabList>
               </div>
 
-              <Tabs.Tab.Panels>
+              <TabPanels>
                 {/* Details Tab */}
-                <Tabs.Tab.Panel>
+                <TabPanel>
                   <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
                     <div className="p-8">
                       <h2 className="text-3xl font-bold text-gray-900 mb-6">About This Project</h2>
 
-                      {/* Property Description */}
+                      {/* Property Description - Styled to match the image */}
                       <div className="prose max-w-none text-gray-700 mb-10 leading-relaxed">
-                        {property.description}
+                        <div className="whitespace-pre-line text-lg">
+                          {property.description && property.description.split('\n').map((paragraph, index) => (
+                            <p key={index} className={index === 0 ? 'text-xl font-medium text-blue-900 mb-4' : 'mb-4'}>{paragraph}</p>
+                          ))}
+                        </div>
                       </div>
 
-                      {/* Property Specs */}
+                      {/* Property Specs - Enhanced with modern styling */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-                        <div className="bg-blue-50 rounded-xl p-6 transform transition-transform duration-300 hover:scale-105">
+                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-blue-100">
                           <div className="flex items-center mb-3">
-                            <div className="bg-blue-100 p-2 rounded-lg mr-3">
+                            <div className="bg-white p-2 rounded-lg mr-3 shadow-sm">
                               <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                               </svg>
@@ -478,9 +482,9 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                           <p className="text-lg font-medium text-blue-900 capitalize">{property.propertyType}</p>
                         </div>
 
-                        <div className="bg-blue-50 rounded-xl p-6 transform transition-transform duration-300 hover:scale-105">
+                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-blue-100">
                           <div className="flex items-center mb-3">
-                            <div className="bg-blue-100 p-2 rounded-lg mr-3">
+                            <div className="bg-white p-2 rounded-lg mr-3 shadow-sm">
                               <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                               </svg>
@@ -490,9 +494,9 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                           <p className="text-lg font-medium text-blue-900">{property.bedrooms}</p>
                         </div>
 
-                        <div className="bg-blue-50 rounded-xl p-6 transform transition-transform duration-300 hover:scale-105">
+                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-blue-100">
                           <div className="flex items-center mb-3">
-                            <div className="bg-blue-100 p-2 rounded-lg mr-3">
+                            <div className="bg-white p-2 rounded-lg mr-3 shadow-sm">
                               <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                               </svg>
@@ -502,9 +506,9 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                           <p className="text-lg font-medium text-blue-900">{property.bathrooms}</p>
                         </div>
 
-                        <div className="bg-blue-50 rounded-xl p-6 transform transition-transform duration-300 hover:scale-105">
+                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-blue-100">
                           <div className="flex items-center mb-3">
-                            <div className="bg-blue-100 p-2 rounded-lg mr-3">
+                            <div className="bg-white p-2 rounded-lg mr-3 shadow-sm">
                               <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                               </svg>
@@ -514,29 +518,12 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                           <p className="text-lg font-medium text-blue-900">{property.area} sq ft</p>
                         </div>
                       </div>
-
-                      {/* Features */}
-                      <div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-6">Key Features</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          {property.features && property.features.map((feature, index) => (
-                            <div key={index} className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
-                              <div className="bg-blue-100 p-2 rounded-full mr-3">
-                                <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                              </div>
-                              <span className="font-medium text-gray-800">{feature}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
                     </div>
                   </div>
-                </Tabs.Tab.Panel>
+                </TabPanel>
 
                 {/* Gallery Tab */}
-                <Tabs.Tab.Panel>
+                <TabPanel>
                   <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
                     <div className="p-8">
                       <h2 className="text-3xl font-bold text-gray-900 mb-6">Property Gallery</h2>
@@ -579,10 +566,10 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </div>
                     </div>
                   </div>
-                </Tabs.Tab.Panel>
+                </TabPanel>
 
                 {/* Floor Plans Tab */}
-                <Tabs.Tab.Panel>
+                <TabPanel>
                   <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
                     <div className="p-8">
                       <h2 className="text-3xl font-bold text-gray-900 mb-6">Floor Plans</h2>
@@ -609,10 +596,10 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </div>
                     </div>
                   </div>
-                </Tabs.Tab.Panel>
+                </TabPanel>
 
                 {/* Amenities Tab */}
-                <Tabs.Tab.Panel>
+                <TabPanel>
                   <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
                     <div className="p-8">
                       <h2 className="text-3xl font-bold text-gray-900 mb-6">Amenities & Features</h2>
@@ -632,10 +619,10 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </div>
                     </div>
                   </div>
-                </Tabs.Tab.Panel>
+                </TabPanel>
 
                 {/* Location Tab */}
-                <Tabs.Tab.Panel>
+                <TabPanel>
                   <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
                     <div className="p-8">
                       <h2 className="text-3xl font-bold text-gray-900 mb-6">Location</h2>
@@ -680,10 +667,10 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </div>
                     </div>
                   </div>
-                </Tabs.Tab.Panel>
+                </TabPanel>
 
                 {/* Payment Plans Tab */}
-                <Tabs.Tab.Panel>
+                <TabPanel>
                   <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
                     <div className="p-8">
                       <h2 className="text-3xl font-bold text-gray-900 mb-6">Payment Plans</h2>
@@ -875,10 +862,10 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </div>
                     </div>
                   </div>
-                </Tabs.Tab.Panel>
+                </TabPanel>
 
                 {/* Brochure Tab */}
-                <Tabs.Tab.Panel>
+                <TabPanel>
                   <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
                     <div className="p-8">
                       <h2 className="text-3xl font-bold text-gray-900 mb-6">Project Brochure</h2>
@@ -933,19 +920,19 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       </div>
                     </div>
                   </div>
-                </Tabs.Tab.Panel>
-              </Tabs.Tab.Panels>
-            </Tabs.Tab.Group>
+                </TabPanel>
+              </TabPanels>
+            </TabGroup>
           </div>
 
           {/* Contact Information - Register Interest Section */}
           <div className="w-full">
-            <div className="bg-gradient-to-r from-blue-900 to-blue-800 rounded-xl shadow-xl overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-900 to-blue-700 rounded-xl shadow-xl overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
                 {/* Left side - Text content */}
                 <div className="flex flex-col justify-center text-white">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-4">The best deals are our expertise – register now.</h2>
-                  <p className="text-lg mb-6">Partner with Dubai's Leading Real Estate Agency Since 2008. Share your details, and our off-plan property expert will call you back within just 55 seconds.</p>
+                  <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">The best deals are our expertise – register now.</h2>
+                  <p className="text-lg mb-6 opacity-90">Partner with Dubai's Leading Real Estate Agency Since 2008. Share your details, and our off-plan property expert will call you back within just 55 seconds.</p>
                   <div className="flex flex-wrap gap-4">
                     <button className="flex items-center px-6 py-3 bg-white text-blue-900 rounded-lg hover:bg-gray-100 transition duration-300 font-medium">
                       <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -962,55 +949,61 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                   </div>
                 </div>
 
-                {/* Right side - Contact Form */}
-                <div className="bg-white rounded-lg shadow-lg p-6">
+                {/* Right side - Contact Form - Styled to match the image */}
+                <div className="bg-white rounded-lg shadow-lg p-6 transform transition-transform duration-300 hover:shadow-xl">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Register Your Interest</h3>
+                  <p className="text-gray-600 mb-6">Fill out the form below and our property consultant will get in touch with you shortly.</p>
+
                   <form className="space-y-4" onSubmit={handleOffplanInquirySubmit}>
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                       <input
                         type="text"
                         id="name"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Name"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        placeholder="Your name"
                         value={offplanFormData.name}
                         onChange={handleOffplanFormChange}
                         required
                       />
                     </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                      <input
-                        type="email"
-                        id="email"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Email"
-                        value={offplanFormData.email}
-                        onChange={handleOffplanFormChange}
-                        required
-                      />
-                    </div>
+
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                       <div className="flex">
-                        <div className="flex items-center px-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-md">
+                        <div className="flex items-center px-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg shadow-sm">
                           <span className="text-gray-500 text-sm">+971</span>
                         </div>
                         <input
                           type="tel"
                           id="phone"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="Phone Number"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                          placeholder="Phone number"
                           value={offplanFormData.phone}
                           onChange={handleOffplanFormChange}
                           required
                         />
                       </div>
                     </div>
+
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        placeholder="Your email"
+                        value={offplanFormData.email}
+                        onChange={handleOffplanFormChange}
+                        required
+                      />
+                    </div>
+
                     <div>
                       <label htmlFor="preferredLanguage" className="block text-sm font-medium text-gray-700 mb-1">Preferred Language</label>
                       <select
                         id="preferredLanguage"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white shadow-sm"
                         value={offplanFormData.preferredLanguage}
                         onChange={handleOffplanFormChange}
                       >
@@ -1020,43 +1013,47 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                         <option value="chinese">Chinese</option>
                       </select>
                     </div>
+
                     <div>
                       <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message</label>
                       <textarea
                         id="message"
-                        rows={4}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder=""
+                        rows={3}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        placeholder="Your message"
                         value={offplanFormData.message}
                         onChange={handleOffplanFormChange}
                       ></textarea>
                     </div>
-                    <div className="flex items-center">
+
+                    <div className="flex items-center bg-blue-50 p-3 rounded-lg">
                       <input
                         type="checkbox"
                         id="interestedInMortgage"
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                         checked={offplanFormData.interestedInMortgage}
                         onChange={handleOffplanFormChange}
                       />
                       <label htmlFor="interestedInMortgage" className="ml-2 block text-sm text-gray-700">
-                        Interested in mortgage advice?
+                        I'm interested in mortgage advice
                       </label>
                     </div>
+
                     {offplanFormError && (
-                      <div className="text-red-500 text-sm">{offplanFormError}</div>
+                      <div className="text-red-500 text-sm bg-red-50 p-3 rounded-lg">{offplanFormError}</div>
                     )}
                     {offplanFormSuccess && (
-                      <div className="text-green-500 text-sm">Thank you for your interest! Our team will contact you shortly.</div>
+                      <div className="text-green-500 text-sm bg-green-50 p-3 rounded-lg">Thank you for your interest! Our team will contact you shortly.</div>
                     )}
+
                     <button
                       type="submit"
-                      className="w-full px-6 py-3 bg-orange-500 text-white font-medium rounded-md hover:bg-orange-600 transition duration-300"
+                      className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-400 text-white font-medium rounded-lg hover:from-orange-600 hover:to-orange-500 transition duration-300 shadow-md text-lg"
                       disabled={offplanFormSubmitting}
                     >
                       {offplanFormSubmitting ? (
                         <span className="flex items-center justify-center">
-                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
@@ -1066,6 +1063,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                         'Register your Interest'
                       )}
                     </button>
+
                     <p className="text-xs text-gray-500 text-center mt-2">
                       By clicking Submit, you agree to our <a href="#" className="text-blue-600 hover:underline">Terms & Conditions</a> and <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>
                     </p>
@@ -1089,7 +1087,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
 
           <div className="fixed inset-0 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center">
-              <Dialog.Panel className="w-full max-w-6xl transform overflow-hidden transition-all">
+              <div className="w-full max-w-6xl transform overflow-hidden transition-all">
                 {/* Close button */}
                 <button
                   onClick={() => setIsGalleryOpen(false)}
@@ -1136,9 +1134,9 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                 {/* Image Counter and Thumbnails */}
                 <div className="bg-black/80 text-white p-4">
                   <div className="flex justify-between items-center mb-4">
-                    <Dialog.Title className="text-lg font-bold">
+                    <h3 className="text-lg font-bold">
                       {property.title}
-                    </Dialog.Title>
+                    </h3>
                     <span className="text-sm bg-black/50 px-3 py-1 rounded-full">
                       {currentPhotoIndex + 1} / {property.images.length}
                     </span>
@@ -1164,7 +1162,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                     ))}
                   </div>
                 </div>
-              </Dialog.Panel>
+              </div>
             </div>
           </div>
         </Dialog>
