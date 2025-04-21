@@ -118,6 +118,7 @@ export default function DeveloperDetailPage({ params }: { params: Promise<{ slug
                 area={property.area}
                 imageUrl={property.mainImage}
                 featured={property.featured}
+                isOffplan={property.isOffplan}
                 agent={property.agent}
               />
             ))}
