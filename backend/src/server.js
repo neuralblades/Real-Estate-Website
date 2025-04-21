@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs');
 
 // Load environment variables
 dotenv.config();
@@ -15,11 +16,24 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: ['http://localhost:3000'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) {
+  console.log('Creating uploads directory...');
+  try {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log('Uploads directory created successfully');
+  } catch (err) {
+    console.error('Error creating uploads directory:', err);
+  }
+}
 
 // Serve static files (for uploaded images)
 app.use('/uploads', (req, res, next) => {
@@ -28,18 +42,26 @@ app.use('/uploads', (req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
-}, express.static(path.join(__dirname, '../uploads'), {
-  setHeaders: (res, path) => {
+}, express.static(uploadsDir, {
+  setHeaders: (res, filePath) => {
     // Set content type based on file extension
-    if (path.endsWith('.jpg') || path.endsWith('.jpeg')) {
+    if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
       res.set('Content-Type', 'image/jpeg');
-    } else if (path.endsWith('.png')) {
+    } else if (filePath.endsWith('.png')) {
       res.set('Content-Type', 'image/png');
-    } else if (path.endsWith('.webp')) {
+    } else if (filePath.endsWith('.webp')) {
       res.set('Content-Type', 'image/webp');
     }
-  }
+  },
+  fallthrough: false // Return 404 for missing files
 }));
+
+// Handle 404 errors for missing images
+app.use('/uploads/:filename', (req, res) => {
+  console.log('Image not found:', req.originalUrl);
+  // Send a placeholder image or a 404 response
+  res.status(404).send('Image not found');
+});
 
 // API Routes
 const propertyRoutes = require('./routes/propertyRoutes');
@@ -49,6 +71,7 @@ const messageRoutes = require('./routes/messageRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const developerRoutes = require('./routes/developerRoutes');
 const documentRequestRoutes = require('./routes/documentRequestRoutes');
+const offplanInquiryRoutes = require('./routes/offplanInquiryRoutes');
 
 app.use('/api/properties', propertyRoutes);
 app.use('/api/users', userRoutes);
@@ -57,6 +80,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/developers', developerRoutes);
 app.use('/api/document-requests', documentRequestRoutes);
+app.use('/api/offplan-inquiries', offplanInquiryRoutes);
 
 // Root route
 app.get('/', (req, res) => {

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getProperties } from '@/services/propertyService';
 import { getAllInquiries } from '@/services/inquiryService';
 import { getAllUsers } from '@/services/userService';
+import { getAllOffplanInquiries } from '@/services/offplanInquiryService';
 
 // Dashboard Stat Card Component
 const StatCard = ({ title, value, icon, bgColor }: { title: string; value: number; icon: React.ReactNode; bgColor: string }) => (
@@ -24,10 +25,12 @@ export default function AdminDashboard() {
     properties: 0,
     users: 0,
     inquiries: 0,
+    offplanInquiries: 0,
     featuredProperties: 0,
   });
   const [recentProperties, setRecentProperties] = useState<any[]>([]);
   const [recentInquiries, setRecentInquiries] = useState<any[]>([]);
+  const [recentOffplanInquiries, setRecentOffplanInquiries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,7 +44,7 @@ export default function AdminDashboard() {
             properties: propertiesResponse.total || propertiesResponse.properties.length,
             featuredProperties: propertiesResponse.properties.filter((p: any) => p.featured).length,
           }));
-          
+
           // Get 5 most recent properties
           const sortedProperties = [...propertiesResponse.properties].sort(
             (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -56,7 +59,7 @@ export default function AdminDashboard() {
             ...prev,
             inquiries: inquiriesResponse.inquiries.length,
           }));
-          
+
           // Get 5 most recent inquiries
           const sortedInquiries = [...inquiriesResponse.inquiries].sort(
             (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -71,6 +74,21 @@ export default function AdminDashboard() {
             ...prev,
             users: usersResponse.users.length,
           }));
+        }
+
+        // Fetch offplan inquiries
+        const offplanInquiriesResponse = await getAllOffplanInquiries();
+        if (offplanInquiriesResponse.success) {
+          setStats(prev => ({
+            ...prev,
+            offplanInquiries: offplanInquiriesResponse.inquiries.length,
+          }));
+
+          // Get 5 most recent offplan inquiries
+          const sortedOffplanInquiries = [...offplanInquiriesResponse.inquiries].sort(
+            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          setRecentOffplanInquiries(sortedOffplanInquiries.slice(0, 5));
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -92,7 +110,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <StatCard
           title="Total Properties"
           value={stats.properties}
@@ -124,7 +142,7 @@ export default function AdminDashboard() {
           bgColor="bg-green-100"
         />
         <StatCard
-          title="Total Inquiries"
+          title="Property Inquiries"
           value={stats.inquiries}
           icon={
             <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -133,9 +151,19 @@ export default function AdminDashboard() {
           }
           bgColor="bg-purple-100"
         />
+        <StatCard
+          title="Offplan Inquiries"
+          value={stats.offplanInquiries}
+          icon={
+            <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          }
+          bgColor="bg-indigo-100"
+        />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Properties */}
         <div className="bg-white rounded-lg shadow-md">
           <div className="p-4 border-b flex justify-between items-center">
@@ -200,6 +228,42 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <p className="text-gray-500 text-center py-4">No inquiries found</p>
+            )}
+          </div>
+        </div>
+
+        {/* Recent Offplan Inquiries */}
+        <div className="bg-white rounded-lg shadow-md">
+          <div className="p-4 border-b flex justify-between items-center">
+            <h2 className="text-lg font-semibold">Recent Offplan Inquiries</h2>
+            <Link href="/admin/offplan-inquiries" className="text-sm text-blue-600 hover:text-blue-800">
+              View All
+            </Link>
+          </div>
+          <div className="p-4">
+            {recentOffplanInquiries.length > 0 ? (
+              <div className="divide-y">
+                {recentOffplanInquiries.map((inquiry) => (
+                  <div key={inquiry.id} className="py-3">
+                    <div className="flex justify-between">
+                      <h3 className="font-medium">{inquiry.name}</h3>
+                      <span className={`px-2 py-1 rounded-full text-xs ${
+                        inquiry.status === 'new' ? 'bg-blue-100 text-blue-800' :
+                        inquiry.status === 'in-progress' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-green-100 text-green-800'
+                      }`}>
+                        {inquiry.status || 'new'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500">{inquiry.email}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {new Date(inquiry.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-4">No offplan inquiries found</p>
             )}
           </div>
         </div>

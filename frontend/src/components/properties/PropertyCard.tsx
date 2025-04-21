@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { getFullImageUrl } from '@/utils/imageUtils';
+import { getFullImageUrl, handleImageError } from '@/utils/imageUtils';
 
 interface PropertyCardProps {
   id: string;
@@ -48,6 +48,7 @@ const PropertyCard = ({
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             unoptimized
+            onError={handleImageError}
           />
           <div className="absolute top-4 left-4 flex flex-col space-y-2">
             {featured && (

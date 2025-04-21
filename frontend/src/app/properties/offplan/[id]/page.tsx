@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 // Auth context not needed for this component
 import { getPropertyById, Property as BaseProperty } from '@/services/propertyService';
+import { submitOffplanInquiry } from '@/services/offplanInquiryService';
 
 // Extended Property interface with headerImage, completionDate, and paymentPlan
 interface Property extends BaseProperty {
@@ -32,9 +33,85 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
   const [isGalleryOpen, setIsGalleryOpen] = useState<boolean>(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number>(0);
 
+  // Offplan inquiry form state
+  const [offplanFormData, setOffplanFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    preferredLanguage: 'english',
+    message: '',
+    interestedInMortgage: false
+  });
+  const [offplanFormSubmitting, setOffplanFormSubmitting] = useState(false);
+  const [offplanFormSuccess, setOffplanFormSuccess] = useState(false);
+  const [offplanFormError, setOffplanFormError] = useState<string | null>(null);
+
   // Contact form popup states
   const [isContactFormOpen, setIsContactFormOpen] = useState<boolean>(false);
   const [contactFormType, setContactFormType] = useState<'brochure' | 'floorplan'>('brochure');
+
+  // Handle offplan form changes
+  const handleOffplanFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { id, value, type } = e.target as HTMLInputElement;
+
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setOffplanFormData(prev => ({
+        ...prev,
+        [id]: checked
+      }));
+    } else {
+      setOffplanFormData(prev => ({
+        ...prev,
+        [id]: value
+      }));
+    }
+  };
+
+  // Handle offplan form submission
+  const handleOffplanInquirySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setOffplanFormSubmitting(true);
+    setOffplanFormError(null);
+
+    try {
+      // Format phone number with country code if not already included
+      const formattedPhone = offplanFormData.phone.startsWith('+')
+        ? offplanFormData.phone
+        : `+971${offplanFormData.phone}`;
+
+      const response = await submitOffplanInquiry({
+        propertyId,
+        propertyTitle: property?.title,
+        name: offplanFormData.name,
+        email: offplanFormData.email,
+        phone: formattedPhone,
+        preferredLanguage: offplanFormData.preferredLanguage,
+        message: offplanFormData.message,
+        interestedInMortgage: offplanFormData.interestedInMortgage
+      });
+
+      if (response.success) {
+        setOffplanFormSuccess(true);
+        // Reset form after successful submission
+        setOffplanFormData({
+          name: '',
+          email: '',
+          phone: '',
+          preferredLanguage: 'english',
+          message: '',
+          interestedInMortgage: false
+        });
+      } else {
+        setOffplanFormError(response.message || 'Failed to submit inquiry. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting offplan inquiry:', error);
+      setOffplanFormError('An unexpected error occurred. Please try again.');
+    } finally {
+      setOffplanFormSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchPropertyDetails = async () => {
@@ -294,30 +371,9 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Column - Project Details */}
-          <div className="w-full lg:w-2/3">
-            {/* Developer Info */}
-            {developer && (
-              <div className="flex items-center mb-8">
-                {developer.logo && (
-                  <div className="relative h-16 w-16 mr-4 rounded-full overflow-hidden border-2 border-gray-200">
-                    <Image
-                      src={getFullImageUrl(developer.logo)}
-                      alt={developer.name}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-                )}
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Developed by</p>
-                  <h3 className="text-xl font-semibold">{developer.name}</h3>
-                </div>
-              </div>
-            )}
-
+        <div className="flex flex-col gap-8">
+          {/* Project Details */}
+          <div className="w-full">
             {/* Tabs Navigation */}
             <Tabs.Tab.Group>
               <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
@@ -882,101 +938,139 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
             </Tabs.Tab.Group>
           </div>
 
-          {/* Right Column - Contact Information */}
-          <div className="w-full lg:w-1/3">
-            <div className="bg-white rounded-xl shadow-md overflow-hidden sticky top-8">
-              <div className="p-6 border-b border-gray-100">
-                <h3 className="text-xl font-bold text-gray-900 mb-1">Interested in this property?</h3>
-                <p className="text-gray-600">Contact us for more information</p>
-              </div>
+          {/* Contact Information - Register Interest Section */}
+          <div className="w-full">
+            <div className="bg-gradient-to-r from-blue-900 to-blue-800 rounded-xl shadow-xl overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+                {/* Left side - Text content */}
+                <div className="flex flex-col justify-center text-white">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-4">The best deals are our expertise – register now.</h2>
+                  <p className="text-lg mb-6">Partner with Dubai's Leading Real Estate Agency Since 2008. Share your details, and our off-plan property expert will call you back within just 55 seconds.</p>
+                  <div className="flex flex-wrap gap-4">
+                    <button className="flex items-center px-6 py-3 bg-white text-blue-900 rounded-lg hover:bg-gray-100 transition duration-300 font-medium">
+                      <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                      Request a Call Back Now
+                    </button>
+                    <button className="flex items-center px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 font-medium">
+                      <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                      Chat with us now
+                    </button>
+                  </div>
+                </div>
 
-              {/* Agent Information */}
-              {property.agent && (
-                <div className="p-6 border-b border-gray-100">
-                  <div className="flex items-center">
-                    <div className="relative h-16 w-16 rounded-full overflow-hidden mr-4 border-2 border-gray-200">
-                      <Image
-                        src={property.agent.avatar ? getFullImageUrl(property.agent.avatar) : '/images/default-avatar.jpg'}
-                        alt={`${property.agent.firstName} ${property.agent.lastName}`}
-                        fill
-                        className="object-cover"
-                        unoptimized
+                {/* Right side - Contact Form */}
+                <div className="bg-white rounded-lg shadow-lg p-6">
+                  <form className="space-y-4" onSubmit={handleOffplanInquirySubmit}>
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                      <input
+                        type="text"
+                        id="name"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Name"
+                        value={offplanFormData.name}
+                        onChange={handleOffplanFormChange}
+                        required
                       />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">{property.agent.firstName} {property.agent.lastName}</h4>
-                      <p className="text-sm text-gray-600">Property Consultant</p>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Email"
+                        value={offplanFormData.email}
+                        onChange={handleOffplanFormChange}
+                        required
+                      />
                     </div>
-                  </div>
-
-                  <div className="mt-4 space-y-3">
-                    <a href={`tel:${property.agent.phone}`} className="flex items-center text-gray-700 hover:text-blue-600">
-                      <div className="bg-blue-100 p-2 rounded-full mr-3">
-                        <svg className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                        </svg>
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                      <div className="flex">
+                        <div className="flex items-center px-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-md">
+                          <span className="text-gray-500 text-sm">+971</span>
+                        </div>
+                        <input
+                          type="tel"
+                          id="phone"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Phone Number"
+                          value={offplanFormData.phone}
+                          onChange={handleOffplanFormChange}
+                          required
+                        />
                       </div>
-                      {property.agent.phone}
-                    </a>
-                    <a href={`mailto:${property.agent.email}`} className="flex items-center text-gray-700 hover:text-blue-600">
-                      <div className="bg-blue-100 p-2 rounded-full mr-3">
-                        <svg className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      {property.agent.email}
-                    </a>
-                  </div>
+                    </div>
+                    <div>
+                      <label htmlFor="preferredLanguage" className="block text-sm font-medium text-gray-700 mb-1">Preferred Language</label>
+                      <select
+                        id="preferredLanguage"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                        value={offplanFormData.preferredLanguage}
+                        onChange={handleOffplanFormChange}
+                      >
+                        <option value="english">English</option>
+                        <option value="arabic">Arabic</option>
+                        <option value="russian">Russian</option>
+                        <option value="chinese">Chinese</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                      <textarea
+                        id="message"
+                        rows={4}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder=""
+                        value={offplanFormData.message}
+                        onChange={handleOffplanFormChange}
+                      ></textarea>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="interestedInMortgage"
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        checked={offplanFormData.interestedInMortgage}
+                        onChange={handleOffplanFormChange}
+                      />
+                      <label htmlFor="interestedInMortgage" className="ml-2 block text-sm text-gray-700">
+                        Interested in mortgage advice?
+                      </label>
+                    </div>
+                    {offplanFormError && (
+                      <div className="text-red-500 text-sm">{offplanFormError}</div>
+                    )}
+                    {offplanFormSuccess && (
+                      <div className="text-green-500 text-sm">Thank you for your interest! Our team will contact you shortly.</div>
+                    )}
+                    <button
+                      type="submit"
+                      className="w-full px-6 py-3 bg-orange-500 text-white font-medium rounded-md hover:bg-orange-600 transition duration-300"
+                      disabled={offplanFormSubmitting}
+                    >
+                      {offplanFormSubmitting ? (
+                        <span className="flex items-center justify-center">
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Submitting...
+                        </span>
+                      ) : (
+                        'Register your Interest'
+                      )}
+                    </button>
+                    <p className="text-xs text-gray-500 text-center mt-2">
+                      By clicking Submit, you agree to our <a href="#" className="text-blue-600 hover:underline">Terms & Conditions</a> and <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>
+                    </p>
+                  </form>
                 </div>
-              )}
-
-              {/* Contact Form */}
-              <div id="inquiry-form" className="p-6 scroll-mt-24">
-                <h4 className="font-semibold text-gray-900 mb-4">Request Information</h4>
-                <form className="space-y-4">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-                    <input
-                      type="text"
-                      id="name"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Enter your name"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Enter your phone number"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                    <input
-                      type="email"
-                      id="email"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Enter your email"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                    <textarea
-                      id="message"
-                      rows={4}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="I'm interested in this property..."
-                    ></textarea>
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300"
-                  >
-                    Send Inquiry
-                  </button>
-                </form>
               </div>
             </div>
           </div>
