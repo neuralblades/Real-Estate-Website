@@ -21,11 +21,6 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, variant = 'default' }) => {
     });
   };
 
-  // Get author full name
-  const authorName = post.author
-    ? `${post.author.firstName} ${post.author.lastName}`
-    : 'Unknown Author';
-
   // Truncate excerpt for compact variant
   const truncateExcerpt = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
@@ -58,19 +53,6 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, variant = 'default' }) => {
           </Link>
 
           <p className="mb-4 text-sm opacity-90">{truncateExcerpt(post.excerpt, 120)}</p>
-
-          <div className="flex items-center">
-            <div className="relative mr-3 h-8 w-8 overflow-hidden rounded-full">
-              <Image
-                src={post.author?.avatar || '/images/default-avatar.png'}
-                alt={authorName}
-                fill
-                className="object-cover"
-                sizes="32px"
-              />
-            </div>
-            <span className="text-sm font-medium">{authorName}</span>
-          </div>
         </div>
       </div>
     );
