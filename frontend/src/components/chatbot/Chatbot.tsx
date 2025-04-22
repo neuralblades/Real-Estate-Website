@@ -189,7 +189,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ currentProperty, onRequestAgent }) =>
       {/* Chatbot button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg flex items-center justify-center"
+        className="bg-gradient-to-r from-gray-500 to-gray-900 text-white rounded-full p-3 shadow-lg flex items-center justify-center"
       >
         {isOpen ? (
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -206,9 +206,9 @@ const Chatbot: React.FC<ChatbotProps> = ({ currentProperty, onRequestAgent }) =>
       {isOpen && (
         <div className="absolute bottom-16 right-0 w-80 md:w-96 bg-white rounded-lg shadow-xl overflow-hidden flex flex-col" style={{ height: '500px' }}>
           {/* Header */}
-          <div className="bg-blue-600 text-white p-4">
+          <div className="bg-gradient-to-r from-gray-500 to-gray-900 text-white p-4">
             <h3 className="font-bold">Luxury Estates Assistant</h3>
-            <p className="text-xs text-blue-100">Ask me anything about properties</p>
+            <p className="text-xs text-gray-300">Ask me anything about properties</p>
           </div>
 
           {/* Messages */}

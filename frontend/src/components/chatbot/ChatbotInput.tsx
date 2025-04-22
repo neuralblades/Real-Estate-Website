@@ -8,8 +8,8 @@ interface ChatbotInputProps {
   placeholder?: string;
 }
 
-const ChatbotInput: React.FC<ChatbotInputProps> = ({ 
-  onSendMessage, 
+const ChatbotInput: React.FC<ChatbotInputProps> = ({
+  onSendMessage,
   disabled = false,
   placeholder = 'Type your message...'
 }) => {
@@ -31,7 +31,7 @@ const ChatbotInput: React.FC<ChatbotInputProps> = ({
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={placeholder}
-          className="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 text-sm"
+          className="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#ccb047] text-gray-700 text-sm"
           disabled={disabled}
         />
         <button
@@ -40,7 +40,7 @@ const ChatbotInput: React.FC<ChatbotInputProps> = ({
           className={`px-4 py-2 rounded-r-md ${
             !message.trim() || disabled
               ? 'bg-gray-300 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
+              : 'bg-gradient-to-r from-gray-500 to-gray-900 text-white hover:from-gray-900 hover:to-black'
           }`}
         >
           <svg

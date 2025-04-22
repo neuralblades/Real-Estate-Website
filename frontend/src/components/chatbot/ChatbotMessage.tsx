@@ -28,7 +28,7 @@ const ChatbotMessage: React.FC<ChatbotMessageProps> = ({ message }) => {
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       {!isUser && (
         <div className="flex-shrink-0 mr-3">
-          <div className="relative h-8 w-8 rounded-full overflow-hidden bg-blue-100">
+          <div className="relative h-8 w-8 rounded-full overflow-hidden bg-[#f3ecd3]">
             {message.type === 'agent' && message.sender?.avatar ? (
               <Image
                 src={getFullImageUrl(message.sender.avatar)}
@@ -39,7 +39,7 @@ const ChatbotMessage: React.FC<ChatbotMessageProps> = ({ message }) => {
                 unoptimized
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white text-xs font-bold">
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-gray-500 to-gray-900 text-white text-xs font-bold">
                 {message.type === 'agent' ? 'A' : 'AI'}
               </div>
             )}
@@ -47,9 +47,9 @@ const ChatbotMessage: React.FC<ChatbotMessageProps> = ({ message }) => {
         </div>
       )}
 
-      <div className={`max-w-[75%] ${isUser ? 'bg-blue-600 text-white' : message.type === 'agent' ? 'bg-green-100 text-gray-800' : 'bg-gray-100 text-gray-800'} rounded-lg px-4 py-2 ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'}`}>
+      <div className={`max-w-[75%] ${isUser ? 'bg-gradient-to-r from-gray-500 to-gray-900 text-white' : message.type === 'agent' ? 'bg-[#efeadb] text-gray-800' : 'bg-gray-100 text-gray-800'} rounded-lg px-4 py-2 ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'}`}>
         {message.type === 'agent' && message.sender && (
-          <div className="text-xs font-semibold text-green-700 mb-1">
+          <div className="text-xs font-semibold text-[#a59969] mb-1">
             {message.sender.name}
           </div>
         )}
@@ -59,7 +59,7 @@ const ChatbotMessage: React.FC<ChatbotMessageProps> = ({ message }) => {
       {isUser && (
         <div className="flex-shrink-0 ml-3">
           <div className="relative h-8 w-8 rounded-full overflow-hidden bg-gray-100">
-            <div className="w-full h-full flex items-center justify-center bg-blue-500 text-white text-xs font-bold">
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-gray-500 to-gray-900 text-white text-xs font-bold">
               YOU
             </div>
           </div>

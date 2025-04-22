@@ -64,7 +64,7 @@ const ConfirmDialog = ({
                 <div className="mt-6 flex justify-end space-x-3">
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ccb047] focus-visible:ring-offset-2"
                     onClick={onClose}
                     disabled={isLoading}
                   >
@@ -74,8 +74,8 @@ const ConfirmDialog = ({
                     type="button"
                     className={`inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
                       isLoading
-                        ? 'bg-red-400 cursor-not-allowed'
-                        : 'bg-red-600 hover:bg-red-700 focus-visible:ring-red-500'
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-gray-500 to-gray-900 hover:from-gray-900 hover:to-black focus-visible:ring-gray-500'
                     }`}
                     onClick={onConfirm}
                     disabled={isLoading}
