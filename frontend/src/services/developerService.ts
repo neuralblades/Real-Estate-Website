@@ -123,3 +123,14 @@ export const deleteDeveloper = async (id: string) => {
     throw error;
   }
 };
+
+// Get developer logo URL
+export const getDeveloperLogoUrl = (logoPath: string | null | undefined) => {
+  if (!logoPath) return '/images/developers/default.webp';
+
+  if (logoPath.startsWith('http')) {
+    return logoPath;
+  }
+
+  return `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/uploads/${logoPath}`;
+};
