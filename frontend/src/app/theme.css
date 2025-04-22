@@ -46,29 +46,7 @@ a:hover {
   color: var(--color-primary-700);
 }
 
-button.primary {
-  background-image: linear-gradient(to right, #1f2937, #111827);
-  color: white;
-}
-
-button.primary:hover {
-  background-image: linear-gradient(to right, #111827, #030712);
-}
-
-button.secondary {
-  background-image: linear-gradient(to right, #1f2937, #111827);
-  color: white;
-}
-
-button.secondary:hover {
-  background-image: linear-gradient(to right, #111827, #030712);
-}
-
-button.accent {
-  background-image: linear-gradient(to right, #1f2937, #111827);
-  color: white;
-}
-
-button.accent:hover {
-  background-image: linear-gradient(to right, #111827, #030712);
-}
+/*
+  Button styles are now handled by the Button component
+  See: src/components/ui/Button.tsx
+*/
