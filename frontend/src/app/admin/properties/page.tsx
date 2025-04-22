@@ -82,18 +82,34 @@ export default function AdminPropertiesPage() {
     if (!propertyToDelete) return;
 
     setIsDeleting(true);
+    setError(null); // Clear any previous errors
+
     try {
       const response = await deleteProperty(propertyToDelete.id);
+
       if (response.success) {
         // Remove the property from the list
         setProperties(properties.filter(p => p.id !== propertyToDelete.id));
         setShowDeleteModal(false);
       } else {
-        setError('Failed to delete property');
+        // Show the specific error message from the server if available
+        const errorMessage = response.message || 'Failed to delete property';
+        setError(errorMessage);
+
+        // Show a more user-friendly message in the UI
+        if (errorMessage.includes('related')) {
+          // The backend already provides a user-friendly message for constraint errors
+          setError(errorMessage);
+        } else if (errorMessage.includes('foreign key constraint')) {
+          setError('This property cannot be deleted because it has related records. Please contact the administrator.');
+        }
+
+        setShowDeleteModal(false); // Close the modal to show the error message
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting property:', error);
-      setError('An error occurred while deleting the property');
+      setError(error?.message || 'An error occurred while deleting the property');
+      setShowDeleteModal(false); // Close the modal to show the error message
     } finally {
       setIsDeleting(false);
     }

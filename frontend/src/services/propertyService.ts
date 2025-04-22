@@ -138,9 +138,14 @@ export const deleteProperty = async (id: string) => {
   try {
     const response = await api.delete(`/properties/${id}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Error deleting property with ID ${id}:`, error);
-    throw error;
+    // Return a structured error response instead of throwing
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Failed to delete property',
+      error: error.message
+    };
   }
 };
 

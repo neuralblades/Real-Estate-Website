@@ -527,7 +527,7 @@ const deleteProperty = async (req, res) => {
 
     // Check if user is the agent or admin
     if (
-      property.agentId !== req.user.id &&
+      Number(property.agentId) !== Number(req.user.id) &&
       req.user.role !== 'admin'
     ) {
       return res.status(403).json({
@@ -536,14 +536,89 @@ const deleteProperty = async (req, res) => {
       });
     }
 
-    await property.destroy();
+    // First, delete any related records
+    const { Inquiry, SavedProperty, Message, OffplanInquiry, sequelize } = require('../models');
+
+    // Use a transaction to ensure all operations succeed or fail together
+    const transaction = await sequelize.transaction();
+
+    try {
+      // First, find all inquiries for this property
+      const inquiries = await Inquiry.findAll({
+        where: { propertyId: id },
+        transaction
+      });
+
+      // Delete messages related to inquiries for this property
+      if (inquiries.length > 0) {
+        const inquiryIds = inquiries.map(inquiry => inquiry.id);
+        await Message.destroy({
+          where: { inquiryId: inquiryIds },
+          transaction
+        });
+      }
+
+      // Now it's safe to delete the inquiries
+      await Inquiry.destroy({
+        where: { propertyId: id },
+        transaction
+      });
+
+      // Delete related offplan inquiries
+      await OffplanInquiry.destroy({
+        where: { propertyId: id },
+        transaction
+      });
+
+      // Delete saved properties references
+      await SavedProperty.destroy({
+        where: { propertyId: id },
+        transaction
+      });
+
+      // Then delete the property
+      await property.destroy({ transaction });
+
+      // Commit the transaction
+      await transaction.commit();
+    } catch (error) {
+      // Rollback the transaction if any operation fails
+      await transaction.rollback();
+      throw error;
+    }
 
     res.json({
       success: true,
       message: 'Property removed',
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error deleting property:', error);
+    console.error('Stack trace:', error.stack);
+
+    // Check for foreign key constraint error
+    if (error.name === 'SequelizeForeignKeyConstraintError') {
+      console.log('Foreign key constraint error details:', {
+        table: error.table,
+        index: error.index,
+        detail: error.parent?.detail,
+        sql: error.sql
+      });
+
+      // Extract the table name from the constraint for a more specific message
+      const constraintTable = error.index?.split('_')[0] || 'unknown';
+      const referencedTable = error.parent?.table || 'unknown';
+
+      return res.status(400).json({
+        success: false,
+        message: `Cannot delete this property because it has related ${referencedTable} records. Please contact the administrator.`,
+        error: error.message,
+        constraint: error.index,
+        detail: error.parent?.detail,
+        table: error.table,
+        referencedTable: error.parent?.table
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'Server Error',
