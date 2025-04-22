@@ -5,45 +5,8 @@ import Link from 'next/link';
 import PropertyCard from './PropertyCard';
 import { getFeaturedProperties, Property } from '@/services/propertyService';
 
-// Fallback data for featured properties
-const fallbackProperties = [
-  {
-    id: '1',
-    title: 'Luxury Penthouse with Ocean View',
-    price: 2500000,
-    location: 'Miami Beach, FL',
-    bedrooms: 3,
-    bathrooms: 3.5,
-    area: 2800,
-    mainImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop',
-    featured: true,
-  },
-  {
-    id: '2',
-    title: 'Modern Villa with Private Pool',
-    price: 1800000,
-    location: 'Beverly Hills, CA',
-    bedrooms: 5,
-    bathrooms: 4,
-    area: 4200,
-    mainImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop',
-    featured: true,
-  },
-  {
-    id: '3',
-    title: 'Elegant Apartment in Downtown',
-    price: 950000,
-    location: 'New York, NY',
-    bedrooms: 2,
-    bathrooms: 2,
-    area: 1500,
-    mainImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop',
-    featured: true,
-  },
-];
-
 const FeaturedProperties = () => {
-  const [properties, setProperties] = useState<Property[]>(fallbackProperties as unknown as Property[]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,12 +15,15 @@ const FeaturedProperties = () => {
       try {
         const response = await getFeaturedProperties();
         if (response.success && response.properties.length > 0) {
-          setProperties(response.properties);
+          // Sort properties by createdAt date (newest first) and take only the latest 3
+          const latestProperties = [...response.properties]
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 3);
+          setProperties(latestProperties);
         }
       } catch (err) {
         console.error('Error fetching featured properties:', err);
         setError('Failed to load featured properties');
-        // Keep using fallback data
       } finally {
         setLoading(false);
       }
@@ -78,10 +44,14 @@ const FeaturedProperties = () => {
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-800"></div>
           </div>
         ) : error ? (
-          <div className="text-center text-red-600 mb-8">{error}</div>
+          <div className="text-center text-gray-800 mb-8 p-4 bg-gray-100 rounded-md">{error}</div>
+        ) : properties.length === 0 ? (
+          <div className="text-center text-gray-800 mb-8 p-4 bg-gray-100 rounded-md">
+            No featured properties available at the moment.
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {properties.map((property) => (
