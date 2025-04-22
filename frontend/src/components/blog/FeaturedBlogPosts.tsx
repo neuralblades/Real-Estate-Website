@@ -74,7 +74,7 @@ const FeaturedBlogPosts: React.FC = () => {
           <h2 className="text-3xl font-bold text-gray-900">Featured Articles</h2>
           <Link
             href="/blog"
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+            className="rounded-md bg-gradient-to-r from-gray-500 to-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
           >
             View All Articles
           </Link>

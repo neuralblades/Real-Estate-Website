@@ -70,7 +70,7 @@ const DeveloperPartners: React.FC = () => {
     <section className="bg-gray-50 py-6">
       <div className="container mx-auto px-4">
         <div className="mb-2 text-center">
-          <h3 className="text-sm font-medium tracking-wider text-gray-500">
+          <h3 className="text-sm font-medium tracking-wider text-[#a49650]">
             Partners with Dubai&apos;s leading developers
           </h3>
         </div>

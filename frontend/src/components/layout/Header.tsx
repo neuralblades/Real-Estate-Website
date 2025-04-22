@@ -13,34 +13,34 @@ const Header = () => {
   const { user, logout } = useAuth();
 
   return (
-    <header className="bg-black shadow-md sticky top-0 z-50">
+    <header className="bg-gradient-to-r from-black to-gray-900 shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-[#c2a124]">
+        <Link href="/" className="text-2xl font-bold text-[#a49650]">
           Luxury Estates
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-8">
-          <Link href="/" className="text-gray-500 hover:text-[#c2a124] transition duration-300">
+          <Link href="/" className="text-gray-500 hover:text-[#a49650] transition duration-300">
             Home
           </Link>
-          <Link href="/properties" className="text-gray-500 hover:text-[#c2a124] transition duration-300">
+          <Link href="/properties" className="text-gray-500 hover:text-[#a49650] transition duration-300">
             Properties
           </Link>
-          <Link href="/properties/offplan" className="text-gray-500 hover:text-[#c2a124] transition duration-300">
+          <Link href="/properties/offplan" className="text-gray-500 hover:text-[#a49650] transition duration-300">
             Off Plan
           </Link>
-          <Link href="/developers" className="text-gray-500 hover:text-[#c2a124] transition duration-300">
+          <Link href="/developers" className="text-gray-500 hover:text-[#a49650] transition duration-300">
             Developers
           </Link>
-          <Link href="/blog" className="text-gray-500 hover:text-[#c2a124] transition duration-300">
+          <Link href="/blog" className="text-gray-500 hover:text-[#a49650] transition duration-300">
             Blog
           </Link>
-          <Link href="/about" className="text-gray-500 hover:text-[#c2a124] transition duration-300">
+          <Link href="/about" className="text-gray-500 hover:text-[#a49650] transition duration-300">
             About
           </Link>
-          <Link href="/contact" className="text-gray-500 hover:text-[#c2a124] transition duration-300">
+          <Link href="/contact" className="text-gray-500 hover:text-[#a49650] transition duration-300">
             Contact
           </Link>
         </nav>
@@ -116,10 +116,10 @@ const Header = () => {
             </div>
           ) : (
             <>
-              <Link href="/auth/login" className="px-4 py-2 text-[#c2a124] border border-[#c2a124] rounded hover:bg-[#c2a124] hover:text-white transition duration-300">
+              <Link href="/auth/login" className="px-4 py-2 text-[#a49650] border border-[#a49650] rounded hover:bg-[#a49650] hover:text-white transition duration-300">
                 Login
               </Link>
-              <Link href="/auth/register" className="px-4 py-2 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded hover:from-gray-900 hover:to-black transition duration-300">
+              <Link href="/auth/register" className="px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded hover:from-gray-900 hover:to-gray-700 transition duration-300">
                 Register
               </Link>
             </>

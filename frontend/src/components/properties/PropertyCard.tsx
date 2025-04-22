@@ -67,7 +67,7 @@ const PropertyCard = ({
 
       <div className="p-5">
         <Link href={isOffplan ? `/properties/offplan/${id}` : `/properties/${id}`}>
-          <h3 className="text-xl font-bold text-gray-800 mb-2 hover:text-[#c2a124] transition duration-300">{title}</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-2 hover:text-[#a49650] transition duration-300">{title}</h3>
         </Link>
 
         <p className="text-gray-600 mb-2 flex items-center">
@@ -78,7 +78,7 @@ const PropertyCard = ({
           {location}
         </p>
 
-        <p className="text-2xl font-bold text-[#c2a124] mb-4">${price.toLocaleString()}</p>
+        <p className="text-2xl font-bold text-[#a49650] mb-4">${price.toLocaleString()}</p>
 
         <div className="flex justify-between text-gray-600 border-t pt-4">
           <div className="flex items-center">

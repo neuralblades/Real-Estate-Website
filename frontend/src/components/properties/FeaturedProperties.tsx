@@ -104,7 +104,7 @@ const FeaturedProperties = () => {
         <div className="text-center mt-12">
           <Link
             href="/properties"
-            className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-900 text-white hover:from-gray-900 hover:to-gray-500 transition duration-300 font-medium rounded-md"
           >
             View All Properties
           </Link>

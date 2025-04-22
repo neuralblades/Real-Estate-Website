@@ -158,7 +158,7 @@ const HeroSection = () => {
               <div className="mt-6">
                 <button
                   type="submit"
-                  className="w-full bg-orange-500 text-white py-3 px-4 rounded-md font-medium hover:bg-orange-600 transition duration-300 inline-block text-center"
+                  className="w-full bg-gradient-to-r from-[#e9ddb0] to-[#a49650] cursor-pointer text-black py-3 px-4 rounded-md font-medium inline-block text-center"
                 >
                   Search Properties
                 </button>
