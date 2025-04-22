@@ -62,7 +62,7 @@ const FeaturedProperties = () => {
             <button
               onClick={() => setActiveFilter('sale')}
               className={`px-6 py-2 rounded-md border ${activeFilter === 'sale'
-                ? 'border-gray-900 bg-gradient-to-r from-gray-800 to-gray-900 text-white font-medium'
+                ? 'border-gray-900 bg-gradient-to-r from-gray-500 to-gray-900 text-white font-medium'
                 : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}`}
             >
               For Sale
@@ -70,7 +70,7 @@ const FeaturedProperties = () => {
             <button
               onClick={() => setActiveFilter('rent')}
               className={`px-6 py-2 rounded-md border ${activeFilter === 'rent'
-                ? 'border-gray-900 bg-gradient-to-r from-gray-800 to-gray-900 text-white font-medium'
+                ? 'border-gray-900 bg-gradient-to-r from-gray-500 to-gray-900 text-white font-medium'
                 : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}`}
             >
               For Rent
@@ -78,7 +78,7 @@ const FeaturedProperties = () => {
             <button
               onClick={() => setActiveFilter('offplan')}
               className={`px-6 py-2 rounded-md border ${activeFilter === 'offplan'
-                ? 'border-gray-900 bg-gradient-to-r from-gray-800 to-gray-900 text-white font-medium'
+                ? 'border-gray-900 bg-gradient-to-r from-gray-500 to-gray-900 text-white font-medium'
                 : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}`}
             >
               Off Plan
@@ -118,7 +118,7 @@ const FeaturedProperties = () => {
         <div className="text-center mt-12">
           <Link
             href={activeFilter === 'offplan' ? '/properties/offplan' : `/properties?status=${activeFilter === 'sale' ? 'for-sale' : 'for-rent'}`}
-            className="inline-block px-6 py-3 bg-gradient-to-r from-gray-800 to-gray-900 text-white hover:from-gray-900 hover:to-black transition duration-300 font-medium rounded-md"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-900 text-white hover:from-gray-900 hover:to-gray-500 transition duration-300 font-medium rounded-md"
           >
             {activeFilter === 'sale' && 'View All Properties For Sale'}
             {activeFilter === 'rent' && 'View All Properties For Rent'}
