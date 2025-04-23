@@ -215,6 +215,19 @@ export default function AdminLayout({
                 {isSidebarOpen && <span className="ml-3">Blog Posts</span>}
               </Link>
             </li>
+            <li>
+              <Link
+                href="/admin/team"
+                className={`flex items-center py-3 px-4 ${
+                  pathname.startsWith('/admin/team') ? 'bg-blue-700' : 'hover:bg-gray-800'
+                } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {isSidebarOpen && <span className="ml-3">Team Members</span>}
+              </Link>
+            </li>
           </ul>
         </nav>
         <div className="absolute bottom-0 p-4">
@@ -253,6 +266,7 @@ export default function AdminLayout({
                 {pathname === '/admin/offplan-inquiries' && 'Offplan Inquiries'}
                 {pathname === '/admin/document-requests' && 'Document Requests'}
                 {pathname.startsWith('/admin/blog') && 'Blog Management'}
+                {pathname.startsWith('/admin/team') && 'Team Management'}
               </h2>
             </div>
             <div className="flex items-center">

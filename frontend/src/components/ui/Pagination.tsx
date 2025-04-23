@@ -1,5 +1,7 @@
 'use client';
 
+import Button from './Button';
+
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
@@ -20,17 +22,15 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
         (i >= currentPage - 1 && i <= currentPage + 1)
       ) {
         pages.push(
-          <button
+          <Button
             key={i}
             onClick={() => onPageChange(i)}
-            className={`px-4 py-2 border rounded-md ${
-              currentPage === i
-                ? 'border-blue-600 bg-blue-600 text-white'
-                : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-            }`}
+            variant={currentPage === i ? 'primary' : 'outline'}
+            size="sm"
+            gradient={false}
           >
             {i}
-          </button>
+          </Button>
         );
       } else if (
         (i === 2 && currentPage > 3) ||
@@ -50,31 +50,25 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
 
   return (
     <nav className="flex items-center space-x-2">
-      <button
+      <Button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`px-4 py-2 border rounded-md ${
-          currentPage === 1
-            ? 'border-gray-200 text-gray-400 cursor-not-allowed'
-            : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-        }`}
+        variant="outline"
+        size="sm"
       >
         Previous
-      </button>
+      </Button>
 
       {renderPageNumbers()}
 
-      <button
+      <Button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`px-4 py-2 border rounded-md ${
-          currentPage === totalPages
-            ? 'border-gray-200 text-gray-400 cursor-not-allowed'
-            : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-        }`}
+        variant="outline"
+        size="sm"
       >
         Next
-      </button>
+      </Button>
     </nav>
   );
 };
