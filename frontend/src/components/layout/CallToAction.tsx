@@ -1,6 +1,6 @@
 "use client";
 
-import Link from 'next/link';
+import Button from '@/components/ui/Button';
 
 const CallToAction = () => {
   return (
@@ -11,12 +11,20 @@ const CallToAction = () => {
           Let us help you discover the perfect property that matches your lifestyle and preferences.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Link href="/properties" className="px-8 py-3 bg-gradient-to-r from-gray-500 to-gray-900 text-white font-bold rounded-md hover:from-gray-900 hover:to-black transition duration-300">
+          <Button
+            href="/properties"
+            variant="primary"
+            size="lg"
+          >
             Browse Properties
-          </Link>
-          <Link href="/contact" className="px-8 py-3 bg-white text-gray-900 font-bold rounded-md border border-gray-300 hover:bg-gray-100 transition duration-300">
+          </Button>
+          <Button
+            href="/contact"
+            variant="wht"
+            size="lg"
+          >
             Contact Us
-          </Link>
+          </Button>
         </div>
       </div>
     </section>

@@ -44,7 +44,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, variant = 'default' }) => {
 
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
           <div className="mb-2 flex items-center space-x-2">
-            <span className="rounded-full bg-[#a49650] px-3 py-1 text-xs font-medium">{post.category}</span>
+            <span className="rounded-full bg-[#a49650] shadow-lg px-3 py-1 text-xs font-medium">{post.category}</span>
             <span className="text-sm opacity-80">{formatDate(post.publishedAt || post.createdAt)}</span>
           </div>
 

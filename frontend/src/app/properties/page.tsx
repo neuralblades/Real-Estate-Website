@@ -1,5 +1,5 @@
 "use client";
-
+import Button from '@/components/ui/Button';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import PropertyCard from '@/components/properties/PropertyCard';
@@ -151,9 +151,9 @@ export default function PropertiesPage() {
       {/* Breadcrumbs */}
       <div className="mb-6">
         <nav className="flex text-gray-600 text-sm">
-          <Link href="/" className="hover:text-blue-600 transition duration-300">Home</Link>
+          <Link href="/" className="hover:text-[#a49650] transition duration-300">Home</Link>
           <span className="mx-2">/</span>
-          <Link href="/properties" className="hover:text-blue-600 transition duration-300">Properties</Link>
+          <Link href="/properties" className="hover:text-[#a49650] transition duration-300">Properties</Link>
           <span className="mx-2">/</span>
         </nav>
       </div>
@@ -163,18 +163,20 @@ export default function PropertiesPage() {
           Explore our collection of premium properties in the most desirable locations.
         </p>
         <div className="flex space-x-4">
-          <Link
+          <Button
             href="/properties"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
+            variant="accent"
+            size="lg"
           >
             Ready Properties
-          </Link>
-          <Link
+          </Button>
+          <Button
             href="/properties/offplan"
-            className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition duration-300"
+            variant="outline"
+            size="lg"
           >
             Off Plan Properties
-          </Link>
+          </Button>
         </div>
       </div>
 

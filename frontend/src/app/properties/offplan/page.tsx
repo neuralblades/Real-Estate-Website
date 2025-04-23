@@ -1,5 +1,5 @@
 "use client";
-
+import Button from '@/components/ui/Button';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -90,18 +90,20 @@ export default function OffPlanPropertiesPage() {
         Discover our exclusive collection of off-plan properties in Dubai. Invest in the future with these upcoming developments offering modern designs and premium amenities.
         </p>
         <div className="flex space-x-4">
-          <Link
+          <Button
             href="/properties"
-            className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition duration-300"
+            variant="outline"
+            size="lg"
           >
             Ready Properties
-          </Link>
-          <Link
+          </Button>
+          <Button
             href="/properties/offplan"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
+            variant="accent"
+            size="lg"
           >
             Off Plan Properties
-          </Link>
+          </Button>
         </div>
       </div>
         {/* Search and Filters */}
