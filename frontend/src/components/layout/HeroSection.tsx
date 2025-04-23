@@ -147,10 +147,10 @@ const HeroSection = () => {
                     onChange={handleFilterChange}
                   >
                     <option value="">Any Price</option>
-                    <option value="0-500000">$0 - $500,000</option>
-                    <option value="500000-1000000">$500,000 - $1,000,000</option>
-                    <option value="1000000-2000000">$1,000,000 - $2,000,000</option>
-                    <option value="2000000-10000000">$2,000,000+</option>
+                    <option value="0-500000">AED 0 - 500,000</option>
+                    <option value="500000-1000000">AED 500,000 - 1,000,000</option>
+                    <option value="1000000-2000000">AED 1,000,000 - 2,000,000</option>
+                    <option value="2000000-10000000">AED 2,000,000+</option>
                   </select>
                 </div>
               </div>

@@ -372,7 +372,7 @@ export default function OffplanPropertyForm({ propertyId, isEdit = false }: Offp
 
           <div>
             <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-              Price (USD) *
+              Price (AED) *
             </label>
             <input
               type="number"

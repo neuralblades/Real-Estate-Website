@@ -78,7 +78,7 @@ const PropertyCard = ({
           {location}
         </p>
 
-        <p className="text-2xl font-bold text-[#a49650] mb-4">${price.toLocaleString()}</p>
+        <p className="text-2xl font-bold text-[#a49650] mb-4">AED {price.toLocaleString()}</p>
 
         <div className="flex justify-between text-gray-600 border-t pt-4">
           <div className="flex items-center">

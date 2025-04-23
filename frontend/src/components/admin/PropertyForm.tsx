@@ -292,7 +292,7 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
 
           <div>
             <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-              Price *
+              Price (AED) *
             </label>
             <input
               type="number"

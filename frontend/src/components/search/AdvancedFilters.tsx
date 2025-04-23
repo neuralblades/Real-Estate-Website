@@ -32,10 +32,10 @@ const statusOptions = [
 // Price range options
 const priceRanges = [
   { value: '', label: 'Any Price' },
-  { value: '0-500000', label: '$0 - $500,000' },
-  { value: '500000-1000000', label: '$500,000 - $1,000,000' },
-  { value: '1000000-2000000', label: '$1,000,000 - $2,000,000' },
-  { value: '2000000-10000000', label: '$2,000,000+' },
+  { value: '0-500000', label: 'AED 0 - 500,000' },
+  { value: '500000-1000000', label: 'AED 500,000 - 1,000,000' },
+  { value: '1000000-2000000', label: 'AED 1,000,000 - 2,000,000' },
+  { value: '2000000-10000000', label: 'AED 2,000,000+' },
 ];
 
 // Bedroom options

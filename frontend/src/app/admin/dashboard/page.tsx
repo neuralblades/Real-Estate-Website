@@ -182,7 +182,7 @@ export default function AdminDashboard() {
                       <p className="text-sm text-gray-500">{property.location}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold">${property.price.toLocaleString()}</p>
+                      <p className="font-bold">AED {property.price.toLocaleString()}</p>
                       <p className="text-xs text-gray-500">
                         {new Date(property.createdAt).toLocaleDateString()}
                       </p>

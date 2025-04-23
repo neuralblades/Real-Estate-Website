@@ -353,7 +353,7 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
           {/* Overview */}
           {/* Property Title and Price */}
           <div className="mb-8">
-            <p className="text-5xl font-bold text-blue-600 mb-2">${property.price.toLocaleString()}</p>
+            <p className="text-5xl font-bold text-blue-600 mb-2">AED {property.price.toLocaleString()}</p>
             <h1 className="text-xl md:text-4xl font-bold text-gray-900 mb-2">{property.title}</h1>
             <p className="text-gray-600 text-lg">{property.location}</p>
           </div>

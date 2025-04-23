@@ -257,7 +257,7 @@ export default function AdminPropertiesPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">${property.price.toLocaleString()}</div>
+                      <div className="text-sm text-gray-900">AED {property.price.toLocaleString()}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{property.propertyType}</div>
