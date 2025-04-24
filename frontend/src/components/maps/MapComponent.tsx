@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { loadGoogleMapsApi } from '@/utils/googleMapsLoader';
 
-interface MapProps {
+interface MapComponentProps {
   address?: string;
   location?: string;
   height?: string;
   zoom?: number;
 }
 
-const Map = ({ address, location, height = '400px', zoom = 15 }: MapProps) => {
+const MapComponent = ({ address, location, height = '400px', zoom = 15 }: MapComponentProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
@@ -27,22 +27,22 @@ const Map = ({ address, location, height = '400px', zoom = 15 }: MapProps) => {
         setMapError('Failed to load Google Maps');
       }
     };
-
+    
     loadMap();
   }, []);
 
   // Geocode address to get coordinates
   useEffect(() => {
     if (!mapLoaded || !window.google || !window.google.maps) return;
-    if (!address || !location) {
+    if (!address && !location) {
       setMapError('Address or location information is missing');
       return;
     }
 
     const geocoder = new window.google.maps.Geocoder();
-    const fullAddress = `${address}, ${location}`;
+    const searchAddress = address ? (location ? `${address}, ${location}` : address) : location;
 
-    geocoder.geocode({ address: fullAddress }, (results, status) => {
+    geocoder.geocode({ address: searchAddress }, (results, status) => {
       if (status === 'OK' && results && results[0]) {
         const { lat, lng } = results[0].geometry.location;
         setCoordinates({
@@ -66,6 +66,63 @@ const Map = ({ address, location, height = '400px', zoom = 15 }: MapProps) => {
       mapTypeControl: true,
       streetViewControl: true,
       fullscreenControl: true,
+      styles: [
+        {
+          featureType: 'water',
+          elementType: 'geometry',
+          stylers: [{ color: '#e9e9e9' }, { lightness: 17 }]
+        },
+        {
+          featureType: 'landscape',
+          elementType: 'geometry',
+          stylers: [{ color: '#f5f5f5' }, { lightness: 20 }]
+        },
+        {
+          featureType: 'road.highway',
+          elementType: 'geometry.fill',
+          stylers: [{ color: '#ffffff' }, { lightness: 17 }]
+        },
+        {
+          featureType: 'road.highway',
+          elementType: 'geometry.stroke',
+          stylers: [{ color: '#ffffff' }, { lightness: 29 }, { weight: 0.2 }]
+        },
+        {
+          featureType: 'road.arterial',
+          elementType: 'geometry',
+          stylers: [{ color: '#ffffff' }, { lightness: 18 }]
+        },
+        {
+          featureType: 'road.local',
+          elementType: 'geometry',
+          stylers: [{ color: '#ffffff' }, { lightness: 16 }]
+        },
+        {
+          featureType: 'poi',
+          elementType: 'geometry',
+          stylers: [{ color: '#f5f5f5' }, { lightness: 21 }]
+        },
+        {
+          featureType: 'poi.park',
+          elementType: 'geometry',
+          stylers: [{ color: '#dedede' }, { lightness: 21 }]
+        },
+        {
+          featureType: 'transit',
+          elementType: 'geometry',
+          stylers: [{ color: '#f2f2f2' }, { lightness: 19 }]
+        },
+        {
+          featureType: 'administrative',
+          elementType: 'geometry.fill',
+          stylers: [{ color: '#fefefe' }, { lightness: 20 }]
+        },
+        {
+          featureType: 'administrative',
+          elementType: 'geometry.stroke',
+          stylers: [{ color: '#fefefe' }, { lightness: 17 }, { weight: 1.2 }]
+        }
+      ]
     };
 
     const map = new window.google.maps.Map(mapRef.current, mapOptions);
@@ -74,11 +131,19 @@ const Map = ({ address, location, height = '400px', zoom = 15 }: MapProps) => {
     new window.google.maps.Marker({
       position: coordinates,
       map,
-      title: location,
+      title: location || address,
       animation: window.google.maps.Animation.DROP,
+      icon: {
+        path: window.google.maps.SymbolPath.CIRCLE,
+        scale: 10,
+        fillColor: '#0D9488', // Teal-600
+        fillOpacity: 1,
+        strokeColor: '#FFFFFF',
+        strokeWeight: 2,
+      }
     });
 
-  }, [mapLoaded, coordinates, zoom, location]);
+  }, [mapLoaded, coordinates, zoom, location, address]);
 
   if (mapError) {
     return (
@@ -106,4 +171,4 @@ const Map = ({ address, location, height = '400px', zoom = 15 }: MapProps) => {
   );
 };
 
-export default Map;
+export default MapComponent;

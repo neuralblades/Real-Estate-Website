@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { loadGoogleMapsApi, isGoogleMapsLoaded } from '@/utils/googleMapsLoader';
 
 interface GoogleMapProps {
   apiKey: string;
@@ -29,16 +30,6 @@ const GoogleMap = ({
   const markerRef = useRef<google.maps.Marker | null>(null);
 
   useEffect(() => {
-    // Load Google Maps API script
-    const loadGoogleMapsApi = () => {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      script.onload = initializeMap;
-      document.head.appendChild(script);
-    };
-
     // Initialize the map
     const initializeMap = () => {
       if (!mapRef.current) return;
@@ -155,12 +146,17 @@ const GoogleMap = ({
       });
     };
 
-    // Check if Google Maps API is already loaded
-    if (window.google && window.google.maps) {
-      initializeMap();
-    } else {
-      loadGoogleMapsApi();
-    }
+    // Load Google Maps API using our shared loader
+    const loadMap = async () => {
+      try {
+        await loadGoogleMapsApi();
+        initializeMap();
+      } catch (error) {
+        console.error('Error loading Google Maps API:', error);
+      }
+    };
+
+    loadMap();
 
     // Cleanup
     return () => {
@@ -171,9 +167,9 @@ const GoogleMap = ({
   }, [apiKey, center, zoom, markerTitle]);
 
   return (
-    <div 
-      ref={mapRef} 
-      style={{ height, width }} 
+    <div
+      ref={mapRef}
+      style={{ height, width }}
       className={`rounded-lg overflow-hidden ${className}`}
     />
   );
