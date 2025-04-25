@@ -17,7 +17,7 @@ interface Property extends BaseProperty {
 import { getDeveloperById, Developer } from '@/services/developerService';
 import { getFullImageUrl } from '@/utils/imageUtils';
 import { Dialog, Transition } from '@headlessui/react';
-import MapComponent from '@/components/Map';
+import MapComponent from '@/components/maps/MapComponent';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import ContactFormPopup from '@/components/ContactFormPopup';
 
@@ -167,7 +167,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-12 flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#a49650]"></div>
       </div>
     );
   }
@@ -351,19 +351,19 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
 
       {/* Project Header - Key Information */}
       <div className="container mx-auto px-4 -mt-20 relative z-10">
-        <div className="bg-white rounded-xl shadow-xl overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x">
+        <div className="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100">
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
             <div className="flex flex-col p-8 hover:bg-gray-50 transition-colors duration-300">
               <h3 className="text-sm uppercase text-gray-500 mb-2 tracking-wider font-medium">STARTING PRICE</h3>
-              <p className="text-4xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">AED {property.price.toLocaleString()}</p>
+              <p className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-teal-800 bg-clip-text text-transparent">AED {property.price.toLocaleString()}</p>
             </div>
             <div className="flex flex-col p-8 hover:bg-gray-50 transition-colors duration-300">
               <h3 className="text-sm uppercase text-gray-500 mb-2 tracking-wider font-medium">HANDOVER</h3>
-              <p className="text-4xl font-semibold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">{property.yearBuilt}</p>
+              <p className="text-4xl font-semibold bg-gradient-to-r from-teal-600 to-teal-800 bg-clip-text text-transparent">{property.yearBuilt}</p>
             </div>
             <div className="flex flex-col p-8 hover:bg-gray-50 transition-colors duration-300">
               <h3 className="text-sm uppercase text-gray-500 mb-2 tracking-wider font-medium">PAYMENT PLAN</h3>
-              <p className="text-4xl font-semibold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">{property.paymentPlan || '70/30'}</p>
+              <p className="text-4xl font-semibold bg-gradient-to-r from-teal-600 to-teal-800 bg-clip-text text-transparent">{property.paymentPlan || '70/30'}</p>
             </div>
           </div>
         </div>
@@ -379,7 +379,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
               <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
                 <TabList className="flex overflow-x-auto scrollbar-hide">
                   <Tab className={({ selected }) =>
-                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
+                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-teal-600 border-b-2 border-teal-600 bg-teal-50' : 'text-gray-600 hover:text-teal-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
                       <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -389,7 +389,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                     </div>
                   </Tab>
                   <Tab className={({ selected }) =>
-                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
+                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-teal-600 border-b-2 border-teal-600 bg-teal-50' : 'text-gray-600 hover:text-teal-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
                       <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -399,7 +399,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                     </div>
                   </Tab>
                   <Tab className={({ selected }) =>
-                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
+                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-teal-600 border-b-2 border-teal-600 bg-teal-50' : 'text-gray-600 hover:text-teal-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
                       <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -409,7 +409,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                     </div>
                   </Tab>
                   <Tab className={({ selected }) =>
-                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
+                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-teal-600 border-b-2 border-teal-600 bg-teal-50' : 'text-gray-600 hover:text-teal-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
                       <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -419,7 +419,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                     </div>
                   </Tab>
                   <Tab className={({ selected }) =>
-                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
+                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-teal-600 border-b-2 border-teal-600 bg-teal-50' : 'text-gray-600 hover:text-teal-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
                       <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -430,7 +430,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                     </div>
                   </Tab>
                   <Tab className={({ selected }) =>
-                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
+                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-teal-600 border-b-2 border-teal-600 bg-teal-50' : 'text-gray-600 hover:text-teal-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
                       <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -440,7 +440,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                     </div>
                   </Tab>
                   <Tab className={({ selected }) =>
-                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`
+                    `py-4 px-6 text-sm font-medium outline-none transition-all duration-200 ${selected ? 'text-teal-600 border-b-2 border-teal-600 bg-teal-50' : 'text-gray-600 hover:text-teal-600 hover:bg-gray-50'}`
                   }>
                     <div className="flex items-center">
                       <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -470,52 +470,52 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
 
                       {/* Property Specs - Enhanced with modern styling */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-blue-100">
+                        <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-teal-100">
                           <div className="flex items-center mb-3">
                             <div className="bg-white p-2 rounded-lg mr-3 shadow-sm">
-                              <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg className="h-6 w-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                               </svg>
                             </div>
                             <h3 className="font-semibold text-gray-900">Property Type</h3>
                           </div>
-                          <p className="text-lg font-medium text-blue-900 capitalize">{property.propertyType}</p>
+                          <p className="text-lg font-medium text-teal-900 capitalize">{property.propertyType}</p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-blue-100">
+                        <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-teal-100">
                           <div className="flex items-center mb-3">
                             <div className="bg-white p-2 rounded-lg mr-3 shadow-sm">
-                              <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg className="h-6 w-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                               </svg>
                             </div>
                             <h3 className="font-semibold text-gray-900">Bedrooms</h3>
                           </div>
-                          <p className="text-lg font-medium text-blue-900">{property.bedrooms}</p>
+                          <p className="text-lg font-medium text-teal-900">{property.bedrooms}</p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-blue-100">
+                        <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-teal-100">
                           <div className="flex items-center mb-3">
                             <div className="bg-white p-2 rounded-lg mr-3 shadow-sm">
-                              <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg className="h-6 w-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                               </svg>
                             </div>
                             <h3 className="font-semibold text-gray-900">Bathrooms</h3>
                           </div>
-                          <p className="text-lg font-medium text-blue-900">{property.bathrooms}</p>
+                          <p className="text-lg font-medium text-teal-900">{property.bathrooms}</p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-blue-100">
+                        <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-6 transform transition-all duration-300 hover:shadow-lg hover:scale-105 border border-teal-100">
                           <div className="flex items-center mb-3">
                             <div className="bg-white p-2 rounded-lg mr-3 shadow-sm">
-                              <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg className="h-6 w-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                               </svg>
                             </div>
                             <h3 className="font-semibold text-gray-900">Area</h3>
                           </div>
-                          <p className="text-lg font-medium text-blue-900">{property.area} sq ft</p>
+                          <p className="text-lg font-medium text-teal-900">{property.area} sq ft</p>
                         </div>
                       </div>
                     </div>
@@ -556,7 +556,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       <div className="mt-6 text-center">
                         <button
                           onClick={() => setIsGalleryOpen(true)}
-                          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 inline-flex items-center"
+                          className="px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg hover:shadow-lg transition-all duration-300 inline-flex items-center"
                         >
                           <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -573,12 +573,12 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                   <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
                     <div className="p-8">
                       <h2 className="text-3xl font-bold text-gray-900 mb-6">Floor Plans</h2>
-                      <div className="bg-blue-50 rounded-xl p-8 text-center">
+                      <div className="bg-teal-50 rounded-xl p-8 text-center">
                         <div className="mb-6">
-                          <svg className="h-16 w-16 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="h-16 w-16 text-teal-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                           </svg>
-                          <h3 className="text-xl font-semibold text-blue-900 mb-2">Floor Plans Available Upon Request</h3>
+                          <h3 className="text-xl font-semibold text-teal-900 mb-2">Floor Plans Available Upon Request</h3>
                           <p className="text-gray-700 max-w-2xl mx-auto">Detailed floor plans for this property are available. Please contact our sales team or fill out the inquiry form to receive the complete floor plans package.</p>
                         </div>
                         <button
@@ -586,7 +586,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                             setContactFormType('floorplan');
                             setIsContactFormOpen(true);
                           }}
-                          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 inline-flex items-center"
+                          className="px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg hover:shadow-lg transition-all duration-300 inline-flex items-center"
                         >
                           <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -607,8 +607,8 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                         {property.features && property.features.map((feature, index) => (
                           <div key={index} className="bg-gray-50 rounded-xl p-4 hover:shadow-md transition-shadow duration-300">
                             <div className="flex items-center">
-                              <div className="bg-blue-100 p-3 rounded-full mr-3">
-                                <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <div className="bg-teal-100 p-3 rounded-full mr-3">
+                                <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg>
                               </div>
@@ -638,8 +638,8 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                         <div className="bg-gray-50 rounded-xl p-6">
                           <h3 className="text-xl font-semibold mb-4">Property Address</h3>
                           <div className="flex items-start">
-                            <div className="bg-blue-100 p-2 rounded-full mr-3 mt-1">
-                              <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="bg-teal-100 p-2 rounded-full mr-3 mt-1">
+                              <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                               </svg>
@@ -653,8 +653,8 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                         <div className="bg-gray-50 rounded-xl p-6">
                           <h3 className="text-xl font-semibold mb-4">Neighborhood</h3>
                           <div className="flex items-start">
-                            <div className="bg-blue-100 p-2 rounded-full mr-3 mt-1">
-                              <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="bg-teal-100 p-2 rounded-full mr-3 mt-1">
+                              <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                               </svg>
                             </div>
@@ -675,66 +675,66 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                     <div className="p-8">
                       <h2 className="text-3xl font-bold text-gray-900 mb-6">Payment Plans</h2>
 
-                      <div className="bg-blue-50 rounded-xl p-6 mb-8">
+                      <div className="bg-teal-50 rounded-xl p-6 mb-8">
                         <div className="flex items-center mb-4">
-                          <div className="bg-blue-100 p-3 rounded-full mr-4">
-                            <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <div className="bg-teal-100 p-3 rounded-full mr-4">
+                            <svg className="h-6 w-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                           </div>
-                          <h3 className="text-2xl font-bold text-blue-900">{property.paymentPlan || '70/30'} Payment Plan</h3>
+                          <h3 className="text-2xl font-bold text-teal-900">{property.paymentPlan || '70/30'} Payment Plan</h3>
                         </div>
 
                         <div className="mt-6">
                           {property.paymentPlan === '60/40' ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                               <div className="bg-white rounded-lg p-6 shadow-sm">
-                                <h4 className="text-lg font-semibold mb-4 text-blue-800">During Construction (60%)</h4>
+                                <h4 className="text-lg font-semibold mb-4 text-teal-800">During Construction (60%)</h4>
                                 <ul className="space-y-3">
                                   <li className="flex items-center">
-                                    <div className="bg-blue-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
-                                      <span className="text-blue-800 text-sm font-medium">1</span>
+                                    <div className="bg-teal-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
+                                      <span className="text-teal-800 text-sm font-medium">1</span>
                                     </div>
                                     <span>10% on booking</span>
                                   </li>
                                   <li className="flex items-center">
-                                    <div className="bg-blue-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
-                                      <span className="text-blue-800 text-sm font-medium">2</span>
+                                    <div className="bg-teal-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
+                                      <span className="text-teal-800 text-sm font-medium">2</span>
                                     </div>
                                     <span>10% after 30 days</span>
                                   </li>
                                   <li className="flex items-center">
-                                    <div className="bg-blue-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
-                                      <span className="text-blue-800 text-sm font-medium">3</span>
+                                    <div className="bg-teal-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
+                                      <span className="text-teal-800 text-sm font-medium">3</span>
                                     </div>
                                     <span>10% after 60 days</span>
                                   </li>
                                   <li className="flex items-center">
-                                    <div className="bg-blue-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
-                                      <span className="text-blue-800 text-sm font-medium">4</span>
+                                    <div className="bg-teal-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
+                                      <span className="text-teal-800 text-sm font-medium">4</span>
                                     </div>
                                     <span>10% after 90 days</span>
                                   </li>
                                   <li className="flex items-center">
-                                    <div className="bg-blue-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
-                                      <span className="text-blue-800 text-sm font-medium">5</span>
+                                    <div className="bg-teal-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
+                                      <span className="text-teal-800 text-sm font-medium">5</span>
                                     </div>
                                     <span>10% after 120 days</span>
                                   </li>
                                   <li className="flex items-center">
-                                    <div className="bg-blue-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
-                                      <span className="text-blue-800 text-sm font-medium">6</span>
+                                    <div className="bg-teal-100 h-6 w-6 rounded-full flex items-center justify-center mr-3">
+                                      <span className="text-teal-800 text-sm font-medium">6</span>
                                     </div>
                                     <span>10% after 150 days</span>
                                   </li>
                                 </ul>
                               </div>
                               <div className="bg-white rounded-lg p-6 shadow-sm">
-                                <h4 className="text-lg font-semibold mb-4 text-blue-800">On Completion (40%)</h4>
-                                <div className="bg-blue-50 p-4 rounded-lg">
+                                <h4 className="text-lg font-semibold mb-4 text-teal-800">On Completion (40%)</h4>
+                                <div className="bg-teal-50 p-4 rounded-lg">
                                   <div className="text-center">
-                                    <div className="text-3xl font-bold text-blue-900 mb-2">40%</div>
-                                    <p className="text-blue-800">Final payment upon handover</p>
+                                    <div className="text-3xl font-bold text-teal-900 mb-2">40%</div>
+                                    <p className="text-teal-800">Final payment upon handover</p>
                                   </div>
                                 </div>
                               </div>
@@ -851,8 +851,8 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
 
                       <div className="bg-gray-50 rounded-xl p-6">
                         <div className="flex items-center mb-4">
-                          <div className="bg-blue-100 p-2 rounded-full mr-3">
-                            <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <div className="bg-teal-100 p-2 rounded-full mr-3">
+                            <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                           </div>
@@ -871,10 +871,10 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       <h2 className="text-3xl font-bold text-gray-900 mb-6">Project Brochure</h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                         <div>
-                          <div className="bg-blue-50 rounded-xl p-6 mb-6">
+                          <div className="bg-teal-50 rounded-xl p-6 mb-6">
                             <div className="flex items-center mb-4">
-                              <div className="bg-blue-100 p-2 rounded-full mr-3">
-                                <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <div className="bg-teal-100 p-2 rounded-full mr-3">
+                                <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                               </div>
@@ -891,7 +891,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                                 setContactFormType('brochure');
                                 setIsContactFormOpen(true);
                               }}
-                              className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center"
+                              className="w-full px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg hover:shadow-lg transition-all duration-300 flex items-center justify-center"
                             >
                               <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -927,14 +927,14 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
 
           {/* Contact Information - Register Interest Section */}
           <div className="w-full">
-            <div className="bg-gradient-to-r from-blue-900 to-blue-700 rounded-xl shadow-xl overflow-hidden">
+            <div className="bg-gradient-to-r from-teal-700 to-teal-900 rounded-xl shadow-xl overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
                 {/* Left side - Text content */}
                 <div className="flex flex-col justify-center text-white">
                   <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">The best deals are our expertise – register now.</h2>
                   <p className="text-lg mb-6 opacity-90">Partner with Dubai's Leading Real Estate Agency Since 2008. Share your details, and our off-plan property expert will call you back within just 55 seconds.</p>
                   <div className="flex flex-wrap gap-4">
-                    <button className="flex items-center px-6 py-3 bg-white text-blue-900 rounded-lg hover:bg-gray-100 transition duration-300 font-medium">
+                    <button className="flex items-center px-6 py-3 bg-white text-teal-900 rounded-lg hover:bg-gray-100 transition duration-300 font-medium">
                       <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
@@ -960,7 +960,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       <input
                         type="text"
                         id="name"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-sm"
                         placeholder="Your name"
                         value={offplanFormData.name}
                         onChange={handleOffplanFormChange}
@@ -977,7 +977,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                         <input
                           type="tel"
                           id="phone"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-sm"
                           placeholder="Phone number"
                           value={offplanFormData.phone}
                           onChange={handleOffplanFormChange}
@@ -991,7 +991,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       <input
                         type="email"
                         id="email"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-sm"
                         placeholder="Your email"
                         value={offplanFormData.email}
                         onChange={handleOffplanFormChange}
@@ -1003,7 +1003,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       <label htmlFor="preferredLanguage" className="block text-sm font-medium text-gray-700 mb-1">Preferred Language</label>
                       <select
                         id="preferredLanguage"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white shadow-sm"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none bg-white shadow-sm"
                         value={offplanFormData.preferredLanguage}
                         onChange={handleOffplanFormChange}
                       >
@@ -1019,18 +1019,18 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                       <textarea
                         id="message"
                         rows={3}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-sm"
                         placeholder="Your message"
                         value={offplanFormData.message}
                         onChange={handleOffplanFormChange}
                       ></textarea>
                     </div>
 
-                    <div className="flex items-center bg-blue-50 p-3 rounded-lg">
+                    <div className="flex items-center bg-teal-50 p-3 rounded-lg">
                       <input
                         type="checkbox"
                         id="interestedInMortgage"
-                        className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        className="h-5 w-5 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
                         checked={offplanFormData.interestedInMortgage}
                         onChange={handleOffplanFormChange}
                       />
@@ -1048,7 +1048,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
 
                     <button
                       type="submit"
-                      className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-400 text-white font-medium rounded-lg hover:from-orange-600 hover:to-orange-500 transition duration-300 shadow-md text-lg"
+                      className="w-full px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white font-medium rounded-lg hover:shadow-lg transition duration-300 shadow-md text-lg"
                       disabled={offplanFormSubmitting}
                     >
                       {offplanFormSubmitting ? (
@@ -1065,7 +1065,7 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                     </button>
 
                     <p className="text-xs text-gray-500 text-center mt-2">
-                      By clicking Submit, you agree to our <a href="#" className="text-blue-600 hover:underline">Terms & Conditions</a> and <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>
+                      By clicking Submit, you agree to our <a href="#" className="text-teal-600 hover:underline">Terms & Conditions</a> and <a href="#" className="text-teal-600 hover:underline">Privacy Policy</a>
                     </p>
                   </form>
                 </div>

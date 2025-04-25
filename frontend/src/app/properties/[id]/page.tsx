@@ -252,7 +252,7 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-12 flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#a49650]"></div>
       </div>
     );
   }
@@ -263,7 +263,7 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
       <div className="container mx-auto px-4 py-12 text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Property Not Found</h1>
         <p className="text-gray-600 mb-8">The property you are looking for does not exist or has been removed.</p>
-        <Link href="/properties" className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300">
+        <Link href="/properties" className="px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white font-medium rounded-md hover:shadow-lg transition duration-300">
           Browse All Properties
         </Link>
       </div>
@@ -353,123 +353,175 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
           {/* Overview */}
           {/* Property Title and Price */}
           <div className="mb-8">
-            <p className="text-5xl font-bold text-blue-600 mb-2">AED {property.price.toLocaleString()}</p>
-            <h1 className="text-xl md:text-4xl font-bold text-gray-900 mb-2">{property.title}</h1>
-            <p className="text-gray-600 text-lg">{property.location}</p>
+            <div className="inline-block px-3 py-1 text-sm font-semibold text-teal-800 bg-teal-100 rounded-full mb-4">
+              {property.status === 'for-sale' ? 'For Sale' : property.status === 'for-rent' ? 'For Rent' : property.status}
+            </div>
+            <p className="text-5xl font-bold bg-gradient-to-r from-teal-600 to-teal-800 bg-clip-text text-transparent mb-4">AED {property.price.toLocaleString()}</p>
+            <h1 className="text-xl md:text-4xl font-bold text-gray-900 mb-3">{property.title}</h1>
+            <p className="text-gray-600 text-lg flex items-center">
+              <svg className="h-5 w-5 mr-2 text-[#a08f7d]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {property.location}
+            </p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Overview</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
-                <svg className="h-8 w-8 text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="bg-white p-8 rounded-xl shadow-md mb-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <span className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center mr-3">
+                <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </span>
+              Overview
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+              <div className="flex flex-col items-center p-5 bg-gray-50 rounded-lg hover:shadow-md transition-all duration-300 border border-gray-100">
+                <svg className="h-8 w-8 text-teal-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
-                <span className="text-gray-600">Bedrooms</span>
-                <span className="text-xl font-bold text-gray-900">{property.bedrooms}</span>
+                <span className="text-gray-600 font-medium">Bedrooms</span>
+                <span className="text-xl font-bold text-gray-900 mt-1">{property.bedrooms}</span>
               </div>
 
-              <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
-                <svg className="h-8 w-8 text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex flex-col items-center p-5 bg-gray-50 rounded-lg hover:shadow-md transition-all duration-300 border border-gray-100">
+                <svg className="h-8 w-8 text-teal-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span className="text-gray-600">Bathrooms</span>
-                <span className="text-xl font-bold text-gray-900">{property.bathrooms}</span>
+                <span className="text-gray-600 font-medium">Bathrooms</span>
+                <span className="text-xl font-bold text-gray-900 mt-1">{property.bathrooms}</span>
               </div>
 
-              <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
-                <svg className="h-8 w-8 text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex flex-col items-center p-5 bg-gray-50 rounded-lg hover:shadow-md transition-all duration-300 border border-gray-100">
+                <svg className="h-8 w-8 text-teal-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
                 </svg>
-                <span className="text-gray-600">Area</span>
-                <span className="text-xl font-bold text-gray-900">{property.area} sqft</span>
+                <span className="text-gray-600 font-medium">Area</span>
+                <span className="text-xl font-bold text-gray-900 mt-1">{property.area} sqft</span>
               </div>
 
-              <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
-                <svg className="h-8 w-8 text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex flex-col items-center p-5 bg-gray-50 rounded-lg hover:shadow-md transition-all duration-300 border border-gray-100">
+                <svg className="h-8 w-8 text-teal-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span className="text-gray-600">Location</span>
-                <span className="text-xl font-bold text-gray-900">{property.location.split(',')[0]}</span>
+                <span className="text-gray-600 font-medium">Location</span>
+                <span className="text-xl font-bold text-gray-900 mt-1">{property.location.split(',')[0]}</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
               {property.isOffplan && (
-                <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
-                  <svg className="h-8 w-8 text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex flex-col items-center p-5 bg-gray-50 rounded-lg hover:shadow-md transition-all duration-300 border border-gray-100">
+                  <svg className="h-8 w-8 text-teal-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  <span className="mt-3 text-md font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded-full mt-1">Off Plan</span>
+                  <span className="text-gray-600 font-medium">Type</span>
+                  <span className="mt-1 text-md font-semibold bg-teal-100 text-teal-800 px-3 py-1 rounded-full">Off Plan</span>
                 </div>
               )}
 
-              <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
-                <svg className="h-8 w-8 text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex flex-col items-center p-5 bg-gray-50 rounded-lg hover:shadow-md transition-all duration-300 border border-gray-100">
+                <svg className="h-8 w-8 text-teal-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-gray-600">Status</span>
-                <span className="text-xl font-bold text-gray-900 capitalize">{property.status.replace('-', ' ')}</span>
+                <span className="text-gray-600 font-medium">Status</span>
+                <span className="text-xl font-bold text-gray-900 capitalize mt-1">{property.status.replace('-', ' ')}</span>
               </div>
 
               {property.yearBuilt && (
-                <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
-                  <svg className="h-8 w-8 text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex flex-col items-center p-5 bg-gray-50 rounded-lg hover:shadow-md transition-all duration-300 border border-gray-100">
+                  <svg className="h-8 w-8 text-teal-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span className="text-gray-600">Year Built</span>
-                  <span className="text-xl font-bold text-gray-900">{property.yearBuilt}</span>
+                  <span className="text-gray-600 font-medium">Year Built</span>
+                  <span className="text-xl font-bold text-gray-900 mt-1">{property.yearBuilt}</span>
                 </div>
               )}
 
-              <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
-                <svg className="h-8 w-8 text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex flex-col items-center p-5 bg-gray-50 rounded-lg hover:shadow-md transition-all duration-300 border border-gray-100">
+                <svg className="h-8 w-8 text-teal-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
-                <span className="text-gray-600">Property Type</span>
-                <span className="text-xl font-bold text-gray-900 capitalize">{property.propertyType}</span>
+                <span className="text-gray-600 font-medium">Property Type</span>
+                <span className="text-xl font-bold text-gray-900 capitalize mt-1">{property.propertyType}</span>
               </div>
             </div>
 
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Description</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+              <span className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center mr-2">
+                <svg className="h-4 w-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+                </svg>
+              </span>
+              Description
+            </h3>
             <div
-              className="text-gray-700 mb-6 leading-relaxed whitespace-pre-wrap"
+              className="text-gray-700 mb-8 leading-relaxed whitespace-pre-wrap bg-gray-50 p-6 rounded-lg border border-gray-100"
               style={{
                 display: 'block',
-                lineHeight: '1.6',
+                lineHeight: '1.8',
               }}
             >
               {property.description}
             </div>
 
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Features</h3>
-            <ul className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+              <span className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center mr-2">
+                <svg className="h-4 w-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              Features
+            </h3>
+            <ul className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
               {property.features.map((feature: string, index: number) => (
-                <li key={index} className="flex items-center text-gray-700">
-                  <svg className="h-5 w-5 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <li key={index} className="flex items-center text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-100 hover:shadow-sm transition-all duration-300">
+                  <svg className="h-5 w-5 text-teal-600 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  {feature}
+                  <span className="font-medium">{feature}</span>
                 </li>
               ))}
             </ul>
           </div>
 
           {/* Location */}
-          <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Location</h2>
-            <MapComponent
-              address={property.address || ''}
-              location={property.location || ''}
-              height="400px"
-              zoom={14}
-            />
-            <div className="mt-4 text-gray-700">
+          <div className="bg-white p-8 rounded-xl shadow-md mb-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <span className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center mr-3">
+                <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </span>
+              Location
+            </h2>
+            <div className="rounded-lg overflow-hidden mb-6 border border-gray-100">
+              <MapComponent
+                address={property.address || ''}
+                location={property.location || ''}
+                height="400px"
+                zoom={14}
+              />
+            </div>
+            <div className="mt-6 text-gray-700 bg-gray-50 p-5 rounded-lg border border-gray-100">
               {property.address && (
-                <p className="mb-1"><strong>Address:</strong> {property.address}</p>
+                <p className="mb-3 flex items-start">
+                  <svg className="h-5 w-5 text-teal-600 mr-2 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                  <span><strong className="font-semibold">Address:</strong> {property.address}</span>
+                </p>
               )}
               {property.location && (
-                <p><strong>Neighborhood:</strong> {property.location}</p>
+                <p className="flex items-start">
+                  <svg className="h-5 w-5 text-teal-600 mr-2 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span><strong className="font-semibold">Neighborhood:</strong> {property.location}</span>
+                </p>
               )}
             </div>
           </div>
@@ -480,11 +532,18 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
           <div className="space-y-8">
           {/* Developer Info (if available) */}
           {property.developer && (
-            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Developer</h2>
-              <div className="flex items-center mb-4">
+            <div className="bg-white p-6 rounded-xl shadow-md mb-6 border border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <span className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center mr-2">
+                  <svg className="h-4 w-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </span>
+                Developer
+              </h2>
+              <div className="flex items-center mb-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
                 {property.developer.logo ? (
-                  <div className="relative h-16 w-16 overflow-hidden mr-4">
+                  <div className="relative h-16 w-16 overflow-hidden mr-4 rounded-lg border border-gray-200">
                     <Image
                       src={getFullImageUrl(property.developer.logo)}
                       alt={property.developer.name}
@@ -495,8 +554,8 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
                     />
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center h-16 w-16 bg-gray-100 mr-4 rounded">
-                    <span className="text-2xl font-bold text-gray-400">{property.developer.name.charAt(0)}</span>
+                  <div className="flex items-center justify-center h-16 w-16 bg-teal-100 mr-4 rounded-lg">
+                    <span className="text-2xl font-bold text-teal-600">{property.developer.name.charAt(0)}</span>
                   </div>
                 )}
                 <div>
@@ -505,7 +564,7 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
               </div>
               <Link
                 href={`/developers/${property.developer.slug}`}
-                className="flex items-center text-blue-600 hover:text-blue-800 transition duration-300 font-medium"
+                className="flex items-center text-teal-600 hover:text-teal-800 transition duration-300 font-medium bg-teal-50 p-3 rounded-lg justify-center"
               >
                 View All Projects
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -516,10 +575,17 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
           )}
 
           {/* Agent Info */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Listed By</h2>
-            <div className="flex items-center mb-4">
-              <div className="relative h-16 w-16 rounded-full overflow-hidden mr-4">
+          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+              <span className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center mr-2">
+                <svg className="h-4 w-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </span>
+              Listed By
+            </h2>
+            <div className="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-100 mb-5">
+              <div className="relative h-16 w-16 rounded-full overflow-hidden mr-4 border-2 border-teal-100">
                 <Image
                   src={getFullImageUrl(property.agent?.avatar || 'https://randomuser.me/api/portraits/men/32.jpg')}
                   alt={property.agent?.firstName ? `${property.agent.firstName} ${property.agent.lastName}` : 'Real Estate Agent'}
@@ -536,25 +602,25 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
                 <p className="text-gray-600">Real Estate Agent</p>
               </div>
             </div>
-            <div className="space-y-2">
-              <p className="flex items-center text-gray-700">
-                <svg className="h-5 w-5 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="space-y-3">
+              <p className="flex items-center text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                <svg className="h-5 w-5 text-teal-600 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                {property.agent?.phone || '(555) 123-4567'}
+                <span className="font-medium">{property.agent?.phone || '(555) 123-4567'}</span>
               </p>
-              <p className="flex items-center text-gray-700">
-                <svg className="h-5 w-5 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <p className="flex items-center text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                <svg className="h-5 w-5 text-teal-600 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                {property.agent?.email || 'agent@luxuryestates.com'}
+                <span className="font-medium">{property.agent?.email || 'agent@luxuryestates.com'}</span>
               </p>
 
               {/* Direct Message Button - Only show if user is logged in */}
               {user && property.agent && (
                 <Link
                   href={`/messages?inquiry=${property.id}`}
-                  className="mt-4 w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md flex items-center justify-center transition duration-300"
+                  className="mt-4 w-full py-3 px-4 bg-gradient-to-r from-teal-600 to-teal-700 text-white font-medium rounded-lg flex items-center justify-center transition duration-300 hover:shadow-lg"
                 >
                   <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -566,22 +632,35 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Interested in this property?</h2>
+          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+              <span className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center mr-2">
+                <svg className="h-4 w-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+              </span>
+              Interested in this property?
+            </h2>
 
             {formSuccess ? (
-              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
+              <div className="bg-green-50 border border-green-200 text-green-700 px-5 py-4 rounded-lg mb-4 flex items-center">
+                <svg className="h-5 w-5 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
                 <p>Thank you for your inquiry! We will contact you shortly.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {formError && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-lg mb-4 flex items-center">
+                    <svg className="h-5 w-5 text-red-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
                     <p>{formError}</p>
                   </div>
                 )}
 
-                <div className="mb-4">
+                <div>
                   <label htmlFor="name" className="block text-gray-700 text-sm font-medium mb-2">
                     Your Name *
                   </label>
@@ -590,13 +669,28 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
                     id="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     placeholder="John Doe"
                     required
                   />
                 </div>
 
-                <div className="mb-4">
+                <div>
+                  <label htmlFor="phone" className="block text-gray-700 text-sm font-medium mb-2">
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    placeholder="(123) 456-7890"
+                    required
+                  />
+                </div>
+
+                <div>
                   <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-2">
                     Email Address *
                   </label>
@@ -605,27 +699,13 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
                     id="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     placeholder="john@example.com"
                     required
                   />
                 </div>
 
-                <div className="mb-4">
-                  <label htmlFor="phone" className="block text-gray-700 text-sm font-medium mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="(123) 456-7890"
-                  />
-                </div>
-
-                <div className="mb-4">
+                <div>
                   <label htmlFor="message" className="block text-gray-700 text-sm font-medium mb-2">
                     Message *
                   </label>
@@ -634,7 +714,7 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
                     rows={4}
                     value={formData.message}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     placeholder="I'm interested in this property and would like to schedule a viewing."
                     required
                   ></textarea>
@@ -643,7 +723,7 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
                 <button
                   type="submit"
                   disabled={formSubmitting}
-                  className={`w-full py-3 px-4 rounded-md font-medium transition duration-300 ${formSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                  className={`w-full py-3 px-4 rounded-lg font-medium transition duration-300 ${formSubmitting ? 'bg-teal-400 cursor-not-allowed' : 'bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:shadow-lg'}`}
                 >
                   {formSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
@@ -656,7 +736,14 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
 
       {/* Similar Properties */}
       <div className="mt-16">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">Similar Properties You May Like</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center">
+          <span className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center mr-3">
+            <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+          </span>
+          Similar Properties You May Like
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {similarProperties.map((property) => (
             <PropertyCard

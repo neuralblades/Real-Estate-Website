@@ -8,6 +8,7 @@ export default function AboutPage() {
     <div className="bg-gray-50">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-gray-500 to-gray-900 text-white py-32">
+        <Image src="/images/banner.webp" alt="About Us" fill className="object-cover opacity-30" />
         <div className="absolute inset-0 bg-black opacity-30"></div>
         <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-10"></div>
         <div className="container mx-auto px-4 relative z-10">
