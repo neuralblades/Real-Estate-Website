@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -15,9 +16,7 @@ const Header = () => {
     <header className="bg-gradient-to-r from-black to-gray-900 shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-[#a49650]">
-          Luxury Estates
-        </Link>
+        <Image src={"/images/logo.svg"} alt="Luxury Estates" width={200} height={200} className="object-contain"/>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-8">
