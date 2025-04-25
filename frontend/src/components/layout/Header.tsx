@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import NotificationBadge from '@/components/messaging/NotificationBadge';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -50,8 +49,6 @@ const Header = () => {
           {user ? (
             <div className="relative">
               <div className="flex items-center space-x-4">
-                {/* Notification Badge */}
-                <NotificationBadge />
 
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
