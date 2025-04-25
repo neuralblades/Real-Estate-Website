@@ -64,7 +64,7 @@ const HeroSection = () => {
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src="/videos/home0.webm" type="video/webm" />
+          <source src="/videos/home.webm" type="video/webm" />
           {/* Fallback for browsers that don't support webm */}
           Your browser does not support the video tag.
         </video>
@@ -158,7 +158,7 @@ const HeroSection = () => {
               <div className="mt-6">
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-[#e9ddb0] to-[#a49650] cursor-pointer text-black font-bold shadow-lg py-3 px-4 rounded-md font-medium inline-block text-center"
+                  className="w-full bg-gradient-to-r from-[#e9ddb0] to-[#a49650] cursor-pointer text-black font-bold shadow-lg py-3 px-4 rounded-md inline-block text-center"
                 >
                   Search Properties
                 </button>
