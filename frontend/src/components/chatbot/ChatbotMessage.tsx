@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
-import { getFullImageUrl } from '@/utils/imageUtils';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 
 export type MessageType = 'user' | 'bot' | 'agent';
 
@@ -30,13 +29,13 @@ const ChatbotMessage: React.FC<ChatbotMessageProps> = ({ message }) => {
         <div className="flex-shrink-0 mr-3">
           <div className="relative h-8 w-8 rounded-full overflow-hidden bg-[#f3ecd3]">
             {message.type === 'agent' && message.sender?.avatar ? (
-              <Image
-                src={getFullImageUrl(message.sender.avatar)}
+              <OptimizedImage
+                src={message.sender.avatar}
                 alt={message.sender?.name || 'Agent'}
                 fill
                 className="object-cover"
+                objectFit="cover"
                 sizes="32px"
-                unoptimized
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-gray-500 to-gray-900 text-white text-xs font-bold">

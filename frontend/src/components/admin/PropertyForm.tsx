@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
-import Image from 'next/image';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import { useRouter } from 'next/navigation';
 import { createProperty, updateProperty, getPropertyById } from '@/services/propertyService';
 import { getDevelopers } from '@/services/developerService';
@@ -597,13 +597,13 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
                   {existingImages.map((image, index) => (
                     <div key={index} className="relative group">
                       <div className="relative h-32 w-full rounded-md overflow-hidden">
-                        <Image
-                          src={getFullImageUrl(image)}
+                        <OptimizedImage
+                          src={image}
                           alt={`Property image ${index + 1}`}
                           fill
                           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
                           className="object-cover"
-                          unoptimized
+                          objectFit="cover"
                         />
                       </div>
                       <button
@@ -661,13 +661,10 @@ const PropertyForm = ({ propertyId, isEdit = false }: PropertyFormProps) => {
                   {imagePreviewUrls.map((url, index) => (
                     <div key={index} className="relative group">
                       <div className="relative h-32 w-full rounded-md overflow-hidden">
-                        <Image
+                        <img
                           src={url}
                           alt={`New image ${index + 1}`}
-                          fill
-                          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
-                          className="object-cover"
-                          unoptimized
+                          className="object-cover w-full h-full"
                         />
                       </div>
                       <button

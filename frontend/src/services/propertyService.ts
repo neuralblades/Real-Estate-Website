@@ -1,6 +1,6 @@
 'use client';
 
-import api from './api';
+import api, { cachedGet, invalidateCache } from './api';
 
 // Types
 export interface Property {
@@ -73,8 +73,17 @@ export const getProperties = async (filters: PropertyFilter = {}) => {
       }
     });
 
-    const response = await api.get(`/properties?${queryParams.toString()}`);
-    return response.data;
+    const queryString = queryParams.toString();
+    const url = `/properties?${queryString}`;
+
+    // Generate a cache key based on the filters
+    const cacheKey = `properties-${queryString}`;
+
+    // Use cached get with a 2-minute TTL for property listings
+    return await cachedGet(url, {
+      cacheKey,
+      cacheTTL: 2 * 60 * 1000, // 2 minutes
+    });
   } catch (error) {
     console.error('Error fetching properties:', error);
     throw error;
@@ -84,8 +93,11 @@ export const getProperties = async (filters: PropertyFilter = {}) => {
 // Get featured properties
 export const getFeaturedProperties = async () => {
   try {
-    const response = await api.get('/properties/featured');
-    return response.data;
+    // Use cached get with a 5-minute TTL for featured properties
+    return await cachedGet('/properties/featured', {
+      cacheKey: 'featured-properties',
+      cacheTTL: 5 * 60 * 1000, // 5 minutes
+    });
   } catch (error) {
     console.error('Error fetching featured properties:', error);
     throw error;
@@ -95,8 +107,11 @@ export const getFeaturedProperties = async () => {
 // Get property by ID
 export const getPropertyById = async (id: string) => {
   try {
-    const response = await api.get(`/properties/${id}`);
-    return response.data;
+    // Use cached get with a 5-minute TTL for property details
+    return await cachedGet(`/properties/${id}`, {
+      cacheKey: `property-${id}`,
+      cacheTTL: 5 * 60 * 1000, // 5 minutes
+    });
   } catch (error) {
     console.error(`Error fetching property with ID ${id}:`, error);
     throw error;
@@ -111,6 +126,12 @@ export const createProperty = async (propertyData: FormData) => {
         'Content-Type': 'multipart/form-data',
       },
     });
+
+    // Invalidate relevant caches
+    invalidateCache('featured-properties');
+    // Invalidate any properties list cache
+    invalidateCache('properties-');
+
     return response.data;
   } catch (error) {
     console.error('Error creating property:', error);
@@ -126,6 +147,13 @@ export const updateProperty = async (id: string, propertyData: FormData) => {
         'Content-Type': 'multipart/form-data',
       },
     });
+
+    // Invalidate relevant caches
+    invalidateCache(`property-${id}`);
+    invalidateCache('featured-properties');
+    // Invalidate any properties list cache
+    invalidateCache('properties-');
+
     return response.data;
   } catch (error) {
     console.error(`Error updating property with ID ${id}:`, error);
@@ -137,6 +165,13 @@ export const updateProperty = async (id: string, propertyData: FormData) => {
 export const deleteProperty = async (id: string) => {
   try {
     const response = await api.delete(`/properties/${id}`);
+
+    // Invalidate relevant caches
+    invalidateCache(`property-${id}`);
+    invalidateCache('featured-properties');
+    // Invalidate any properties list cache
+    invalidateCache('properties-');
+
     return response.data;
   } catch (error: any) {
     console.error(`Error deleting property with ID ${id}:`, error);
@@ -152,8 +187,11 @@ export const deleteProperty = async (id: string) => {
 // Get properties by agent
 export const getAgentProperties = async (agentId: string) => {
   try {
-    const response = await api.get(`/properties/agent/${agentId}`);
-    return response.data;
+    // Use cached get with a 2-minute TTL for agent properties
+    return await cachedGet(`/properties/agent/${agentId}`, {
+      cacheKey: `agent-properties-${agentId}`,
+      cacheTTL: 2 * 60 * 1000, // 2 minutes
+    });
   } catch (error) {
     console.error(`Error fetching properties for agent ${agentId}:`, error);
     throw error;

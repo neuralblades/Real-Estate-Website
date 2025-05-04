@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+
 import { getDeveloperById, createDeveloper, updateDeveloper } from '@/services/developerService';
 import { useToast } from '@/contexts/ToastContext';
 import { getFullImageUrl } from '@/utils/imageUtils';
@@ -63,7 +63,7 @@ export default function DeveloperForm({ developerId, isEdit = false }: Developer
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
-    
+
     if (type === 'checkbox') {
       const { checked } = e.target as HTMLInputElement;
       setFormData({ ...formData, [name]: checked });
@@ -235,12 +235,10 @@ export default function DeveloperForm({ developerId, isEdit = false }: Developer
             />
             {logoPreview && (
               <div className="mt-2 relative h-40 w-full">
-                <Image
+                <img
                   src={logoPreview}
                   alt="Logo Preview"
-                  fill
-                  className="object-contain"
-                  unoptimized
+                  className="object-contain w-full h-full"
                 />
               </div>
             )}

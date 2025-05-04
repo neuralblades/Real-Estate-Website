@@ -1,8 +1,8 @@
 "use client";
 
-import Image from 'next/image';
 import Link from 'next/link';
-import { getFullImageUrl, handleImageError } from '@/utils/imageUtils';
+import { getFullImageUrl } from '@/utils/imageUtils';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 
 interface PropertyCardProps {
   id: string;
@@ -41,14 +41,14 @@ const PropertyCard = ({
     <div className={`bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-xl ${featured ? 'transform hover:-translate-y-2' : 'hover:-translate-y-1'}`}>
       <Link href={isOffplan ? `/properties/offplan/${id}` : `/properties/${id}`}>
         <div className="relative h-64 w-full">
-          <Image
-            src={getFullImageUrl(imageUrl)}
+          <OptimizedImage
+            src={imageUrl}
             alt={title}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            unoptimized
-            onError={handleImageError}
+            objectFit="cover"
+            priority={featured}
           />
           <div className="absolute top-4 left-4 flex flex-col space-y-2">
             {featured && (

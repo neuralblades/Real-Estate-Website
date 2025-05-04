@@ -1,8 +1,7 @@
 'use client';
 
-import Image from 'next/image';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import Link from 'next/link';
-import { getFullImageUrl } from '@/utils/imageUtils';
 
 interface DeveloperCardProps {
   id: string;
@@ -24,13 +23,13 @@ const DeveloperCard = ({
       <Link href={`/developers/${slug}`}>
         <div className="relative h-48 w-full">
           {logo ? (
-            <Image
-              src={getFullImageUrl(logo)}
+            <OptimizedImage
+              src={logo}
               alt={name}
               fill
               className="object-contain p-4"
+              objectFit="contain"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              unoptimized
             />
           ) : (
             <div className="flex items-center justify-center h-full bg-gray-100">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
-import Image from 'next/image';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import { useRouter } from 'next/navigation';
 import { createProperty, updateProperty, getPropertyById } from '@/services/propertyService';
 import { getDevelopers } from '@/services/developerService';
@@ -692,13 +692,22 @@ export default function OffplanPropertyForm({ propertyId, isEdit = false }: Offp
         {(headerImagePreviewUrl || existingHeaderImage) && (
           <div className="relative mb-6">
             <div className="relative h-48 w-full rounded-md overflow-hidden">
-              <Image
-                src={headerImagePreviewUrl || getFullImageUrl(existingHeaderImage)}
-                alt="Header Image"
-                fill
-                className="object-cover"
-                unoptimized
-              />
+              {headerImagePreviewUrl ? (
+                <img
+                  src={headerImagePreviewUrl}
+                  alt="Header Image Preview"
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <OptimizedImage
+                  src={existingHeaderImage}
+                  alt="Header Image"
+                  fill
+                  className="object-cover"
+                  objectFit="cover"
+                  sizes="100vw"
+                />
+              )}
             </div>
             <button
               type="button"
@@ -741,12 +750,13 @@ export default function OffplanPropertyForm({ propertyId, isEdit = false }: Offp
           {existingImages.map((image, index) => (
             <div key={`existing-${index}`} className="relative">
               <div className="relative h-40 w-full rounded-md overflow-hidden">
-                <Image
-                  src={getFullImageUrl(image)}
+                <OptimizedImage
+                  src={image}
                   alt={`Property Image ${index + 1}`}
                   fill
                   className="object-cover"
-                  unoptimized
+                  objectFit="cover"
+                  sizes="(max-width: 768px) 100vw, 25vw"
                 />
               </div>
               <button
@@ -770,12 +780,10 @@ export default function OffplanPropertyForm({ propertyId, isEdit = false }: Offp
           {imagePreviewUrls.map((url, index) => (
             <div key={`new-${index}`} className="relative">
               <div className="relative h-40 w-full rounded-md overflow-hidden">
-                <Image
+                <img
                   src={url}
                   alt={`New Property Image ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  unoptimized
+                  className="object-cover w-full h-full"
                 />
               </div>
               <button
