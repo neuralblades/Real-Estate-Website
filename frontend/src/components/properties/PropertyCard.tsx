@@ -1,7 +1,6 @@
 "use client";
 
 import Link from 'next/link';
-import { getFullImageUrl } from '@/utils/imageUtils';
 import OptimizedImage from '@/components/ui/OptimizedImage';
 
 interface PropertyCardProps {

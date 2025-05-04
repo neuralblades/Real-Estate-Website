@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { getBlogPosts, deleteBlogPost, BlogPost, getBlogImageUrl } from '@/services/blogService';
+import { getBlogPosts, deleteBlogPost, BlogPost } from '@/services/blogService';
 import Button from '@/components/ui/Button';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 
@@ -166,11 +166,12 @@ const AdminBlogPage: React.FC = () => {
                     <td className="py-3 px-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10 relative">
-                          <Image
-                            src={getBlogImageUrl(post.featuredImage)}
+                          <OptimizedImage
+                            src={post.featuredImage || '/images/placeholder.jpg'}
                             alt={post.title}
                             fill
                             className="object-cover rounded-md"
+                            objectFit="cover"
                             sizes="40px"
                           />
                         </div>

@@ -17,6 +17,7 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   isAdmin: boolean;
+  isAuthenticated: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => void;
@@ -89,6 +90,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Check if user is admin
   const isAdmin = user?.role === 'admin';
 
+  // Check if user is authenticated
+  const isAuthenticated = !!user;
+
   return (
     <AuthContext.Provider
       value={{
@@ -96,6 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         loading,
         error,
         isAdmin,
+        isAuthenticated,
         login,
         register,
         logout,

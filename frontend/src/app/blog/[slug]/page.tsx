@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState, useEffect, Usable } from 'react';
-import Image from 'next/image';
+import React, { useState, useEffect, use } from 'react';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import BlogSidebar from '@/components/blog/BlogSidebar';
-import { getBlogPostBySlug, getBlogImageUrl, addBlogComment, BlogPost } from '@/services/blogService';
+import { getBlogPostBySlug, addBlogComment, BlogPost } from '@/services/blogService';
 
 interface BlogPostDetailClientProps {
   slug: string;
 }
 
 const BlogPostDetailClient: React.FC<BlogPostDetailClientProps> = ({ slug }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -155,11 +155,12 @@ const BlogPostDetailClient: React.FC<BlogPostDetailClientProps> = ({ slug }) => 
             <article className="overflow-hidden rounded-xl bg-white shadow-md">
               {/* Featured Image */}
               <div className="relative h-96 w-full">
-                <Image
-                  src={getBlogImageUrl(post.featuredImage)}
+                <OptimizedImage
+                  src={post.featuredImage || '/placeholder.png'}
                   alt={post.title}
                   fill
                   className="object-cover"
+                  objectFit="cover"
                   priority
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 50vw"
                 />
@@ -306,11 +307,12 @@ const BlogPostDetailClient: React.FC<BlogPostDetailClientProps> = ({ slug }) => 
                     <div key={comment.id} className="rounded-lg bg-gray-50 p-4">
                       <div className="mb-2 flex items-center">
                         <div className="relative mr-3 h-8 w-8 overflow-hidden rounded-full">
-                          <Image
+                          <OptimizedImage
                             src={comment.user?.avatar || '/images/default-avatar.png'}
                             alt={comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
                             fill
                             className="object-cover"
+                            objectFit="cover"
                             sizes="32px"
                           />
                         </div>
@@ -344,9 +346,9 @@ const BlogPostDetailClient: React.FC<BlogPostDetailClientProps> = ({ slug }) => 
 };
 
 // Server component that passes the slug to the client component
-export default function BlogPostDetailPage({ params }: { params: Usable<{ slug: string }> }) {
-  // Properly unwrap params using React.use()
-  const unwrappedParams = React.use(params);
+export default function BlogPostDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  // Unwrap params using React.use() as required by Next.js 15
+  const unwrappedParams = use(params);
   const slug = unwrappedParams.slug;
   return <BlogPostDetailClient slug={slug} />;
 }

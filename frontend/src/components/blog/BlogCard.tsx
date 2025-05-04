@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import Link from 'next/link';
-import { BlogPost, getBlogImageUrl } from '@/services/blogService';
+import { BlogPost } from '@/services/blogService';
 
 interface BlogCardProps {
   post: BlogPost;
@@ -29,15 +29,16 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, variant = 'default' }) => {
 
   if (variant === 'featured') {
     return (
-      <div className="group relative h-full overflow-hidden rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
-        <div className="relative h-64 w-full overflow-hidden">
-          <Image
-            src={getBlogImageUrl(post.featuredImage)}
+      <div className="group relative h-full overflow-hidden rounded-xl shadow-lg transition-all duration-500 ease-in-out hover:shadow-xl hover:-translate-y-1">
+        <div className="relative h-64 w-full overflow-hidden bg-gray-100">
+          <OptimizedImage
+            src={post.featuredImage || '/placeholder.png'}
             alt={post.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            objectFit="cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            priority
+            priority={false} // Set to false to ensure fade-in effect
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
         </div>
@@ -48,8 +49,8 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, variant = 'default' }) => {
             <span className="text-sm opacity-80">{formatDate(post.publishedAt || post.createdAt)}</span>
           </div>
 
-          <Link href={`/blog/${post.slug}`} className="group-hover:text-[blue-300]">
-            <h3 className="mb-2 text-xl font-bold leading-tight transition-colors">{post.title}</h3>
+          <Link href={`/blog/${post.slug}`} className="block group-hover:text-blue-300 transition-colors duration-500">
+            <h3 className="mb-2 text-xl font-bold leading-tight transition-all duration-500">{post.title}</h3>
           </Link>
 
           <p className="mb-4 text-sm opacity-90">{truncateExcerpt(post.excerpt, 120)}</p>
@@ -60,20 +61,22 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, variant = 'default' }) => {
 
   if (variant === 'compact') {
     return (
-      <div className="flex items-start space-x-4">
-        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
-          <Image
-            src={getBlogImageUrl(post.featuredImage)}
+      <div className="flex items-start space-x-4 group">
+        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
+          <OptimizedImage
+            src={post.featuredImage || '/placeholder.png'}
             alt={post.title}
             fill
-            className="object-cover"
+            className="object-cover transition-all duration-500 ease-in-out group-hover:scale-110 will-change-transform"
+            objectFit="cover"
             sizes="64px"
+            priority={false} // Set to false to ensure fade-in effect
           />
         </div>
 
         <div className="flex-grow">
-          <Link href={`/blog/${post.slug}`} className="hover:text-blue-600">
-            <h4 className="mb-1 font-medium leading-tight">{post.title}</h4>
+          <Link href={`/blog/${post.slug}`} className="block hover:text-blue-600 transition-colors duration-500">
+            <h4 className="mb-1 font-medium leading-tight transition-all duration-500">{post.title}</h4>
           </Link>
           <p className="text-xs text-gray-500">{formatDate(post.publishedAt || post.createdAt)}</p>
         </div>
@@ -83,14 +86,16 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, variant = 'default' }) => {
 
   // Default variant
   return (
-    <div className="group h-full overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg">
-      <div className="relative h-48 w-full overflow-hidden">
-        <Image
-          src={getBlogImageUrl(post.featuredImage)}
+    <div className="group h-full overflow-hidden rounded-xl bg-white shadow-md transition-all duration-500 ease-in-out hover:shadow-lg hover:-translate-y-1">
+      <div className="relative h-48 w-full overflow-hidden bg-gray-100">
+        <OptimizedImage
+          src={post.featuredImage || '/placeholder.png'}
           alt={post.title}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          objectFit="cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority={false} // Set to false to ensure fade-in effect
         />
       </div>
 
@@ -100,8 +105,8 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, variant = 'default' }) => {
           <span className="text-xs text-gray-500">{formatDate(post.publishedAt || post.createdAt)}</span>
         </div>
 
-        <Link href={`/blog/${post.slug}`} className="hover:text-blue-600">
-          <h3 className="mb-2 text-xl font-bold leading-tight transition-colors">{post.title}</h3>
+        <Link href={`/blog/${post.slug}`} className="block hover:text-blue-600 transition-colors duration-500">
+          <h3 className="mb-2 text-xl font-bold leading-tight transition-all duration-500">{post.title}</h3>
         </Link>
 
         <p className="mb-4 text-gray-600">{truncateExcerpt(post.excerpt, 150)}</p>

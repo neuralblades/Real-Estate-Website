@@ -2,24 +2,11 @@
  * Utility functions for handling image URLs and optimizations
  */
 
-// Backend server URL
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-
 // Default placeholder image for missing images
 const DEFAULT_IMAGE = '/placeholder.png';
 
-// Default image quality for WebP conversion
-const DEFAULT_WEBP_QUALITY = 80;
-
 // Debug mode for image loading
 const DEBUG_IMAGES = false;
-
-// Image optimization settings
-const IMAGE_OPTIMIZATION = {
-  enabled: true,      // Enable Next.js image optimization
-  quality: 80,        // Default quality for optimized images
-  formats: ['webp'],  // Preferred formats
-};
 
 // Check if WebP is supported by the browser
 export const isWebPSupported = (): boolean => {
@@ -39,10 +26,9 @@ export const isWebPSupported = (): boolean => {
 /**
  * Converts a relative image path to a full URL with proper optimization handling
  * @param imagePath - The relative image path (e.g., /uploads/image.jpg)
- * @param preferWebP - Whether to prefer WebP format if supported
  * @returns The full URL to the image or a placeholder if the image is missing
  */
-export const getFullImageUrl = (imagePath: string, preferWebP: boolean = true): string => {
+export const getFullImageUrl = (imagePath: string): string => {
   // Handle null or undefined image paths
   if (!imagePath) {
     if (DEBUG_IMAGES) console.log('No image path provided, using default placeholder');
@@ -54,8 +40,8 @@ export const getFullImageUrl = (imagePath: string, preferWebP: boolean = true): 
     return imagePath;
   }
 
-  // Check if we should use WebP format
-  const useWebP = preferWebP && isWebPSupported() && !imagePath.endsWith('.webp');
+  // WebP support check is commented out until implemented
+  // const supportsWebP = preferWebP && isWebPSupported() && !imagePath.endsWith('.webp');
 
   // If the image path starts with /uploads, use our proxy
   if (imagePath.startsWith('/uploads/')) {
@@ -73,11 +59,22 @@ export const getFullImageUrl = (imagePath: string, preferWebP: boolean = true): 
 
   // If the image path is just a filename without a path, assume it's in uploads
   if (imagePath.match(/^[^/]+\.(jpg|jpeg|png|webp|gif|svg)$/i)) {
-    // For Next.js Image optimization, we use the local proxy path
+    // Check if it's a blog image (usually starts with 'blog-')
+    if (imagePath.startsWith('blog-')) {
+      const proxyUrl = `/uploads/blog/${imagePath}`;
+
+      if (DEBUG_IMAGES) {
+        console.log(`Blog Image URL (optimized): ${proxyUrl}`);
+      }
+
+      return proxyUrl;
+    }
+
+    // For Next.js Image optimization, we use the local proxy path for property images
     const proxyUrl = `/property-images/${imagePath}`;
 
     if (DEBUG_IMAGES) {
-      console.log(`Image URL (filename only, optimized): ${proxyUrl}`);
+      console.log(`Property Image URL (filename only, optimized): ${proxyUrl}`);
     }
 
     return proxyUrl;

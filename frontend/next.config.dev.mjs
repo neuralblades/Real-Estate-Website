@@ -73,6 +73,8 @@ const nextConfig = {
   experimental: {
     // Enable optimizations for large pages
     optimizePackageImports: ['react-icons', 'date-fns', 'lodash'],
+    // Disable process killing that causes EPERM errors
+    forceSwcTransforms: true,
   },
 
   // Configure the headers
@@ -156,12 +158,15 @@ const nextConfig = {
         source: '/property-images/:path*',
         destination: 'http://localhost:5000/uploads/:path*',
       },
-      // Proxy blog images specifically
-      {
-        source: '/uploads/blog/:path*',
-        destination: 'http://localhost:5000/uploads/blog/:path*',
-      },
     ];
+  },
+
+  // Disable the process killing that causes EPERM errors
+  onDemandEntries: {
+    // Keep the pages in memory for longer
+    maxInactiveAge: 60 * 60 * 1000, // 1 hour
+    // Don't dispose of pages
+    pagesBufferLength: 5,
   },
 };
 

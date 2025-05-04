@@ -223,11 +223,17 @@ export const addBlogComment = async (postId: string, content: string) => {
 
 // Get full image URL
 export const getBlogImageUrl = (imagePath: string | null) => {
-  if (!imagePath) return '/images/blog-placeholder.jpg';
+  if (!imagePath) return '/placeholder.png';
 
   if (imagePath.startsWith('http')) {
     return imagePath;
   }
 
-  return `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/uploads/blog/${imagePath}`;
+  // Use a relative path for Next.js Image optimization
+  if (imagePath.startsWith('/')) {
+    return imagePath;
+  }
+
+  // For blog images, use a consistent path format
+  return `/uploads/blog/${imagePath}`;
 };

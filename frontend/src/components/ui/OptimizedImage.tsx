@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import {
   getFullImageUrl,
   handleImageError,
   getResponsiveSizes,
-  generateBlurPlaceholder,
-  isWebPSupported
+  generateBlurPlaceholder
 } from '@/utils/imageUtils';
 
 interface OptimizedImageProps {
@@ -41,8 +40,25 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   blurDataURL,
   onLoad,
 }) => {
+  // Start with isLoaded=false to ensure the fade-in effect
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
+
+  // Force images to start with opacity-0 by using useEffect
+  useEffect(() => {
+    // Reset loading state when src changes
+    setIsLoaded(false);
+
+    // For cached images that load instantly, set loaded after a small delay
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [src]);
+
+  // Ensure alt text is provided and meaningful
+  const safeAlt = alt && alt.trim() !== '' ? alt : 'Image';
 
   // Generate a default blur data URL if not provided
   const defaultBlurDataURL = blurDataURL || generateBlurPlaceholder(100, 100);
@@ -51,9 +67,20 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const responsiveSizes = sizes || getResponsiveSizes();
 
   // Handle image load
-  const handleLoad = () => {
-    setIsLoaded(true);
-    if (onLoad) onLoad();
+  const handleLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
+    // Make sure the image is actually loaded before setting isLoaded to true
+    const img = event.target as HTMLImageElement;
+    if (img.complete) {
+      // Use a small timeout to ensure the transition is visible
+      setTimeout(() => {
+        setIsLoaded(true);
+        if (onLoad) onLoad();
+      }, 10);
+    } else {
+      // For images that load very quickly, set loaded state directly
+      setIsLoaded(true);
+      if (onLoad) onLoad();
+    }
   };
 
   // Handle image error
@@ -84,18 +111,18 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     );
   }
 
-  // Get the full image URL with WebP support if available
-  const fullSrc = getFullImageUrl(src, isWebPSupported());
+  // Get the full image URL
+  const fullSrc = getFullImageUrl(src);
 
   // Common props for the Image component
   const imageProps = {
     src: fullSrc,
-    alt,
+    alt: safeAlt, // Use the safe alt text
     // Next.js 15 doesn't support the quality prop directly in the images config
     // but we can still pass it to the Image component
     ...(quality ? { quality } : {}),
     sizes: responsiveSizes,
-    className: `transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`,
+    className: `transition-opacity duration-500 ease-in ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`,
     style: { objectFit } as React.CSSProperties,
     onLoad: handleLoad,
     onError: handleError,
@@ -106,18 +133,22 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   };
 
   return fill ? (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full bg-gray-100">
       <Image
         {...imageProps}
+        alt={safeAlt} // Explicitly add alt prop to satisfy ESLint
         fill
       />
     </div>
   ) : (
-    <Image
-      {...imageProps}
-      width={width || 100}
-      height={height || 100}
-    />
+    <div className="relative bg-gray-100" style={{ width: width || 'auto', height: height || 'auto' }}>
+      <Image
+        {...imageProps}
+        alt={safeAlt} // Explicitly add alt prop to satisfy ESLint
+        width={width || 100}
+        height={height || 100}
+      />
+    </div>
   );
 };
 

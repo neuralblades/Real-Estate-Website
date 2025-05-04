@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { createBlogPost, updateBlogPost, getBlogPostById, getBlogImageUrl, BlogPost } from '@/services/blogService';
+import { createBlogPost, updateBlogPost, getBlogPostById } from '@/services/blogService';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 
 interface BlogPostFormProps {
   postId?: string;
@@ -39,7 +39,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
           setLoading(true);
           const response = await getBlogPostById(postId);
           const post = response.post;
-          
+
           setFormData({
             title: post.title,
             content: post.content,
@@ -49,11 +49,12 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
             status: post.status,
             featuredImage: null
           });
-          
+
           if (post.featuredImage) {
-            setImagePreview(getBlogImageUrl(post.featuredImage));
+            // Use the direct URL to the backend for preview
+            setImagePreview(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/uploads/blog/${post.featuredImage}`);
           }
-          
+
           setError(null);
         } catch (err) {
           console.error(`Error fetching blog post with ID ${postId}:`, err);
@@ -78,7 +79,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setFormData(prev => ({ ...prev, featuredImage: file }));
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onload = () => {
@@ -91,46 +92,45 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       setError('You must be logged in to create or edit a blog post');
       return;
     }
-    
+
     try {
       setSubmitting(true);
       setError(null);
-      
+
       // Create FormData object
       const submitData = new FormData();
       submitData.append('title', formData.title);
       submitData.append('content', formData.content);
       submitData.append('excerpt', formData.excerpt);
       submitData.append('category', formData.category);
-      
+
       // Parse tags
       const tagsArray = formData.tags
         .split(',')
         .map(tag => tag.trim())
         .filter(tag => tag);
       submitData.append('tags', JSON.stringify(tagsArray));
-      
+
       submitData.append('status', formData.status);
-      
+
       if (formData.featuredImage) {
         submitData.append('featuredImage', formData.featuredImage);
       }
-      
-      let response;
+
       if (postId) {
         // Update existing post
-        response = await updateBlogPost(postId, submitData);
+        await updateBlogPost(postId, submitData);
         setSuccess('Blog post updated successfully');
       } else {
         // Create new post
-        response = await createBlogPost(submitData);
+        await createBlogPost(submitData);
         setSuccess('Blog post created successfully');
-        
+
         // Reset form after successful creation
         setFormData({
           title: '',
@@ -146,7 +146,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
           fileInputRef.current.value = '';
         }
       }
-      
+
       // Redirect to blog post list after a delay
       setTimeout(() => {
         router.push('/admin/blog');
@@ -177,13 +177,13 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
           <p>{error}</p>
         </div>
       )}
-      
+
       {success && (
         <div className="bg-green-50 text-green-800 p-4 rounded-md">
           <p>{success}</p>
         </div>
       )}
-      
+
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
           Title
@@ -199,7 +199,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
           required
         />
       </div>
-      
+
       <div>
         <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
           Content
@@ -218,7 +218,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
           HTML is supported for formatting.
         </p>
       </div>
-      
+
       <div>
         <label htmlFor="excerpt" className="block text-sm font-medium text-gray-700 mb-1">
           Excerpt
@@ -236,7 +236,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
           If left empty, an excerpt will be generated from the content.
         </p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
@@ -260,7 +260,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
             <option value="News">News</option>
           </select>
         </div>
-        
+
         <div>
           <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
             Tags
@@ -276,7 +276,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
           />
         </div>
       </div>
-      
+
       <div>
         <label htmlFor="featuredImage" className="block text-sm font-medium text-gray-700 mb-1">
           Featured Image
@@ -293,23 +293,23 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
         <p className="mt-1 text-sm text-gray-500">
           Recommended size: 1200 x 800 pixels. Max file size: 5MB.
         </p>
-        
+
         {imagePreview && (
           <div className="mt-4">
             <p className="text-sm font-medium text-gray-700 mb-2">Image Preview:</p>
             <div className="relative h-48 w-full md:w-1/2 overflow-hidden rounded-md">
-              <Image
+              <OptimizedImage
                 src={imagePreview}
                 alt="Featured image preview"
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
+                objectFit="cover"
               />
             </div>
           </div>
         )}
       </div>
-      
+
       <div>
         <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
           Status
@@ -326,7 +326,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ postId }) => {
           <option value="published">Published</option>
         </select>
       </div>
-      
+
       <div className="flex justify-end space-x-4">
         <button
           type="button"

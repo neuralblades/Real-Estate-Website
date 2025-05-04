@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Usable } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import PropertyCard from '@/components/properties/PropertyCard';
@@ -880,9 +880,9 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
 
 
 // Server component that passes the ID to the client component
-export default function PropertyDetailPage({ params }: { params: Usable<{ id: string }> }) {
+export default function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   // Properly unwrap params using React.use()
-  const unwrappedParams = React.use(params);
+  const unwrappedParams = use(params);
   const propertyId = unwrappedParams.id;
   return <PropertyDetailClient propertyId={propertyId} />;
 }
