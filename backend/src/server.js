@@ -23,6 +23,14 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Add compression middleware for better performance
+const compression = require('compression');
+app.use(compression());
+
+// Add cache middleware for API responses
+const cacheMiddleware = require('./middleware/cacheMiddleware');
+app.use('/api', cacheMiddleware);
+
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, '../uploads');
 const blogUploadsDir = path.join(__dirname, '../uploads/blog');
@@ -53,6 +61,11 @@ app.use('/uploads', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.header('Access-Control-Allow-Methods', 'GET');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Add cache control headers for better performance
+  res.header('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800'); // 1 day cache, 7 days stale
+  res.header('Expires', new Date(Date.now() + 86400000).toUTCString()); // 1 day
+
   next();
 }, express.static(uploadsDir, {
   setHeaders: (res, filePath) => {
@@ -64,8 +77,13 @@ app.use('/uploads', (req, res, next) => {
     } else if (filePath.endsWith('.webp')) {
       res.set('Content-Type', 'image/webp');
     }
+
+    // Add cache control headers for better performance
+    res.set('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800'); // 1 day cache, 7 days stale
+    res.set('Expires', new Date(Date.now() + 86400000).toUTCString()); // 1 day
   },
-  fallthrough: false // Return 404 for missing files
+  fallthrough: false, // Return 404 for missing files
+  maxAge: 86400000 // 1 day in milliseconds
 }));
 
 // Handle 404 errors for missing images
