@@ -2,15 +2,28 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import { getDevelopers, deleteDeveloper } from '@/services/developerService';
-import { getFullImageUrl } from '@/utils/imageUtils';
+
 import { useToast } from '@/contexts/ToastContext';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
+import Button from '@/components/ui/Button';
+import { FaPlus, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+
+interface Developer {
+  id: string;
+  name: string;
+  logo?: string;
+  website?: string;
+  established?: string;
+  headquarters?: string;
+  featured: boolean;
+  slug: string;
+}
 
 export default function DevelopersPage() {
-  const [developers, setDevelopers] = useState([]);
+  const [developers, setDevelopers] = useState<Developer[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -18,6 +31,7 @@ export default function DevelopersPage() {
 
   useEffect(() => {
     fetchDevelopers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDevelopers = async () => {
@@ -57,35 +71,37 @@ export default function DevelopersPage() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Developers</h1>
-        <Link
-          href="/admin/developers/new"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
-        >
-          Add Developer
-        </Link>
-      </div>
+    <div className="p-6">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">Developers</h1>
+          <Button
+            href="/admin/developers/new"
+            variant="primary"
+            gradient={true}
+            className="flex items-center"
+          >
+            <FaPlus className="mr-2" /> Add Developer
+          </Button>
+        </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-100">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                   Developer
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                   Established
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                   Headquarters
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                   Featured
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                   Actions
                 </th>
               </tr>
@@ -93,27 +109,33 @@ export default function DevelopersPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {developers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                    No developers found
+                  <td colSpan={5} className="py-4 px-4 text-center">
+                    <div className="bg-gray-100 p-6 rounded-lg">
+                      <p className="text-gray-600 mb-4">No developers found.</p>
+                      <Button href="/admin/developers/new" variant="primary" size="sm">
+                        Add Your First Developer
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ) : (
-                developers.map((developer: any) => (
+                developers.map((developer) => (
                   <tr key={developer.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="py-3 px-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10 relative">
                           {developer.logo ? (
-                            <Image
-                              src={getFullImageUrl(developer.logo)}
+                            <OptimizedImage
+                              src={developer.logo}
                               alt={developer.name}
                               fill
                               className="object-contain"
-                              unoptimized
+                              objectFit="contain"
+                              sizes="40px"
                             />
                           ) : (
-                            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                              <span className="text-gray-500 font-medium">{developer.name.charAt(0)}</span>
+                            <div className="h-10 w-10 rounded-full bg-teal-100 flex items-center justify-center">
+                              <span className="text-teal-700 font-medium">{developer.name.charAt(0)}</span>
                             </div>
                           )}
                         </div>
@@ -125,7 +147,7 @@ export default function DevelopersPage() {
                                 href={developer.website.startsWith('http') ? developer.website : `https://${developer.website}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 hover:underline"
+                                className="text-teal-600 hover:underline"
                               >
                                 {developer.website}
                               </a>
@@ -134,15 +156,15 @@ export default function DevelopersPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="py-3 px-4 whitespace-nowrap text-sm text-gray-500">
                       {developer.established || 'N/A'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="py-3 px-4 whitespace-nowrap text-sm text-gray-500">
                       {developer.headquarters || 'N/A'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="py-3 px-4 whitespace-nowrap">
                       {developer.featured ? (
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
                           Yes
                         </span>
                       ) : (
@@ -151,26 +173,29 @@ export default function DevelopersPage() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="py-3 px-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
                         <Link
                           href={`/admin/developers/edit/${developer.id}`}
-                          className="text-indigo-600 hover:text-indigo-900"
+                          className="text-teal-600 hover:text-teal-800"
+                          title="Edit"
                         >
-                          Edit
+                          <FaEdit />
                         </Link>
                         <button
                           onClick={() => openDeleteDialog(developer.id)}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-800"
+                          title="Delete"
                         >
-                          Delete
+                          <FaTrash />
                         </button>
                         <Link
                           href={`/developers/${developer.slug}`}
                           target="_blank"
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-teal-600 hover:text-teal-800"
+                          title="View"
                         >
-                          View
+                          <FaEye />
                         </Link>
                       </div>
                     </td>

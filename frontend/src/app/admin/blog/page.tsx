@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { getBlogPosts, deleteBlogPost, BlogPost, getBlogImageUrl } from '@/services/blogService';
+import Button from '@/components/ui/Button';
+import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 
 const AdminBlogPage: React.FC = () => {
   const { user, isAdmin } = useAuth();
@@ -83,76 +85,85 @@ const AdminBlogPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Blog Posts</h1>
-        </div>
-        <div className="animate-pulse space-y-4">
-          {[...Array(5)].map((_, index) => (
-            <div key={index} className="h-16 bg-gray-200 rounded-md"></div>
-          ))}
+      <div className="p-6">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-800">Blog Posts</h1>
+          </div>
+          <div className="animate-pulse space-y-4">
+            {[...Array(5)].map((_, index) => (
+              <div key={index} className="h-16 bg-gray-200 rounded-md"></div>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Blog Posts</h1>
-        <Link
-          href="/admin/blog/add"
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-        >
-          Add New Post
-        </Link>
-      </div>
+    <div className="p-6">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">Blog Posts</h1>
+          <Button
+            href="/admin/blog/add"
+            variant="primary"
+            gradient={true}
+            className="flex items-center"
+          >
+            <FaPlus className="mr-2" /> Add New Post
+          </Button>
+        </div>
 
       {error && (
-        <div className="bg-red-50 text-red-800 p-4 rounded-md">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           <p>{error}</p>
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Post
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Author
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Category
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Views
-                </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-100">
+            <tr>
+              <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+                Post
+              </th>
+              <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+                Author
+              </th>
+              <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+                Category
+              </th>
+              <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+                Status
+              </th>
+              <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+                Date
+              </th>
+              <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+                Views
+              </th>
+              <th scope="col" className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+                Actions
+              </th>
+            </tr>
+          </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {posts.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
-                    No blog posts found
+                  <td colSpan={7} className="py-4 px-4 text-center">
+                    <div className="bg-gray-100 p-6 rounded-lg">
+                      <p className="text-gray-600 mb-4">No blog posts found.</p>
+                      <Button href="/admin/blog/add" variant="primary" size="sm">
+                        Add Your First Post
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 posts.map((post) => (
                   <tr key={post.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="py-3 px-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10 relative">
                           <Image
@@ -165,7 +176,7 @@ const AdminBlogPage: React.FC = () => {
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            <Link href={`/blog/${post.slug}`} target="_blank" className="hover:text-blue-600">
+                            <Link href={`/blog/${post.slug}`} target="_blank" className="hover:text-teal-600">
                               {post.title}
                             </Link>
                           </div>
@@ -175,62 +186,66 @@ const AdminBlogPage: React.FC = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="py-3 px-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
                         {post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Unknown'}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-teal-100 text-teal-800">
                         {post.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="py-3 px-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         post.status === 'published'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-amber-100 text-amber-800'
                       }`}>
                         {post.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="py-3 px-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(post.publishedAt || post.createdAt)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="py-3 px-4 whitespace-nowrap text-sm text-gray-500">
                       {post.viewCount}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="py-3 px-4 whitespace-nowrap text-sm font-medium">
                       {deleteConfirmation === post.id ? (
-                        <div className="flex items-center justify-end space-x-2">
-                          <button
+                        <div className="flex items-center space-x-2">
+                          <Button
                             onClick={() => handleDelete(post.id)}
-                            className="text-red-600 hover:text-red-900 disabled:opacity-50"
-                            disabled={deleting}
+                            variant="primary"
+                            size="sm"
+                            isLoading={deleting}
                           >
-                            {deleting ? 'Deleting...' : 'Confirm'}
-                          </button>
-                          <button
+                            Confirm
+                          </Button>
+                          <Button
                             onClick={cancelDelete}
-                            className="text-gray-600 hover:text-gray-900"
+                            variant="outline"
+                            size="sm"
                             disabled={deleting}
                           >
                             Cancel
-                          </button>
+                          </Button>
                         </div>
                       ) : (
-                        <div className="flex items-center justify-end space-x-4">
+                        <div className="flex space-x-2">
                           <Link
                             href={`/admin/blog/edit/${post.id}`}
-                            className="text-blue-600 hover:text-blue-900"
+                            className="text-teal-600 hover:text-teal-800"
+                            title="Edit"
                           >
-                            Edit
+                            <FaEdit />
                           </Link>
                           <button
                             onClick={() => confirmDelete(post.id)}
-                            className="text-red-600 hover:text-red-900"
+                            className="text-red-600 hover:text-red-800"
+                            title="Delete"
                           >
-                            Delete
+                            <FaTrash />
                           </button>
                         </div>
                       )}

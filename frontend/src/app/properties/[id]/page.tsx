@@ -1,16 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, Usable } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import PropertyCard from '@/components/properties/PropertyCard';
 import { getPropertyById, getProperties, Property } from '@/services/propertyService';
 import { createInquiry } from '@/services/inquiryService';
-import { getFullImageUrl } from '@/utils/imageUtils';
 import { Dialog, Transition } from '@headlessui/react';
 import MapComponent from '@/components/Map';
 import Chatbot from '@/components/chatbot/Chatbot';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 
 // Mock data for properties
 const properties = [
@@ -290,14 +289,14 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
         <div className="grid grid-cols-12 gap-4">
           {/* Main large image (left side) */}
           <div className="col-span-12 md:col-span-8 relative h-[500px]">
-            <Image
-              src={getFullImageUrl(property.images[0])}
+            <OptimizedImage
+              src={property.images[0]}
               alt={property.title}
               fill
               className="object-cover rounded-lg"
               sizes="(max-width: 768px) 100vw, 66vw"
               priority
-              unoptimized
+              objectFit="cover"
             />
           </div>
 
@@ -305,25 +304,25 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
           <div className="col-span-12 md:col-span-4 grid grid-rows-2 gap-4">
             {/* Top right image */}
             <div className="relative h-[240px]">
-              <Image
-                src={getFullImageUrl(property.images[1] || property.images[0])}
+              <OptimizedImage
+                src={property.images[1] || property.images[0]}
                 alt={`${property.title} - Image 2`}
                 fill
                 className="object-cover rounded-lg"
                 sizes="(max-width: 768px) 100vw, 33vw"
-                unoptimized
+                objectFit="cover"
               />
             </div>
 
             {/* Bottom right image */}
             <div className="relative h-[240px]">
-              <Image
-                src={getFullImageUrl(property.images[2] || property.images[0])}
+              <OptimizedImage
+                src={property.images[2] || property.images[0]}
                 alt={`${property.title} - Image 3`}
                 fill
                 className="object-cover rounded-lg"
                 sizes="(max-width: 768px) 100vw, 33vw"
-                unoptimized
+                objectFit="cover"
               />
             </div>
           </div>
@@ -544,13 +543,13 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
               <div className="flex items-center mb-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
                 {property.developer.logo ? (
                   <div className="relative h-16 w-16 overflow-hidden mr-4 rounded-lg border border-gray-200">
-                    <Image
-                      src={getFullImageUrl(property.developer.logo)}
+                    <OptimizedImage
+                      src={property.developer.logo}
                       alt={property.developer.name}
                       fill
                       sizes="(max-width: 768px) 100vw, 64px"
                       className="object-contain"
-                      unoptimized
+                      objectFit="contain"
                     />
                   </div>
                 ) : (
@@ -586,13 +585,13 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
             </h2>
             <div className="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-100 mb-5">
               <div className="relative h-16 w-16 rounded-full overflow-hidden mr-4 border-2 border-teal-100">
-                <Image
-                  src={getFullImageUrl(property.agent?.avatar || 'https://randomuser.me/api/portraits/men/32.jpg')}
+                <OptimizedImage
+                  src={property.agent?.avatar || 'https://randomuser.me/api/portraits/men/32.jpg'}
                   alt={property.agent?.firstName ? `${property.agent.firstName} ${property.agent.lastName}` : 'Real Estate Agent'}
                   fill
                   sizes="(max-width: 768px) 100vw, 64px"
                   className="object-cover"
-                  unoptimized
+                  objectFit="cover"
                 />
               </div>
               <div>
@@ -807,13 +806,14 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
 
                     {/* Main image */}
                     <div className="relative h-[70vh] w-full">
-                      <Image
-                        src={getFullImageUrl(property.images[currentPhotoIndex])}
+                      <OptimizedImage
+                        src={property.images[currentPhotoIndex]}
                         alt={`${property.title} - Image ${currentPhotoIndex + 1}`}
                         fill
                         className="object-contain"
                         sizes="100vw"
-                        unoptimized
+                        objectFit="contain"
+                        priority
                       />
                     </div>
 
@@ -854,13 +854,13 @@ function PropertyDetailClient({ propertyId }: { propertyId: string }) {
                         onClick={() => setCurrentPhotoIndex(index)}
                         className={`relative h-16 w-24 flex-shrink-0 overflow-hidden rounded ${index === currentPhotoIndex ? 'ring-2 ring-blue-500' : ''}`}
                       >
-                        <Image
-                          src={getFullImageUrl(image)}
+                        <OptimizedImage
+                          src={image}
                           alt={`Thumbnail ${index + 1}`}
                           fill
                           className="object-cover"
                           sizes="96px"
-                          unoptimized
+                          objectFit="cover"
                         />
                       </button>
                     ))}

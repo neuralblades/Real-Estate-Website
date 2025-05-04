@@ -1,12 +1,14 @@
 "use client";
 import Button from '@/components/ui/Button';
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import PropertyCard from '@/components/properties/PropertyCard';
 import SearchInput from '@/components/search/SearchInput';
 import AdvancedFilters from '@/components/search/AdvancedFilters';
+import Pagination from '@/components/ui/Pagination';
 import Link from 'next/link';
 import { getProperties, PropertyFilter, Property } from '@/services/propertyService';
+import { ITEMS_PER_PAGE } from '@/config/constants';
 
 // Fallback data for properties
 const fallbackProperties = [
@@ -77,15 +79,18 @@ const fallbackProperties = [
 
 export default function PropertiesPage() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
   const [properties, setProperties] = useState<Property[]>(fallbackProperties as unknown as Property[]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(parseInt(searchParams.get('page') || '1', 10));
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
   // Filter states
   const [filters, setFilters] = useState<PropertyFilter>({
-    page: 1,
+    page: parseInt(searchParams.get('page') || '1', 10),
     type: searchParams.get('type') || '',
     status: searchParams.get('status') || '',
     location: searchParams.get('location') || '',
@@ -109,6 +114,10 @@ export default function PropertiesPage() {
         setProperties(response.properties);
         setTotalPages(response.pages);
         setCurrentPage(response.page);
+        setTotalItems(response.total || response.properties.length);
+
+        // Update URL with current filters for bookmarking and sharing
+        updateUrlWithFilters(filters);
       } else {
         // If API returns empty, keep using fallback data
         console.log('No properties returned from API, using fallback data');
@@ -120,6 +129,29 @@ export default function PropertiesPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Update URL with current filters without page reload
+  const updateUrlWithFilters = (currentFilters: PropertyFilter) => {
+    const params = new URLSearchParams();
+
+    // Only add parameters that have values
+    if (currentFilters.page && currentFilters.page > 1) params.set('page', currentFilters.page.toString());
+    if (currentFilters.type) params.set('type', currentFilters.type);
+    if (currentFilters.status) params.set('status', currentFilters.status);
+    if (currentFilters.location) params.set('location', currentFilters.location);
+    if (currentFilters.minPrice) params.set('minPrice', currentFilters.minPrice.toString());
+    if (currentFilters.maxPrice) params.set('maxPrice', currentFilters.maxPrice.toString());
+    if (currentFilters.minArea) params.set('minArea', currentFilters.minArea.toString());
+    if (currentFilters.maxArea) params.set('maxArea', currentFilters.maxArea.toString());
+    if (currentFilters.bedrooms) params.set('bedrooms', currentFilters.bedrooms.toString());
+    if (currentFilters.bathrooms) params.set('bathrooms', currentFilters.bathrooms.toString());
+    if (currentFilters.yearBuilt) params.set('yearBuilt', currentFilters.yearBuilt.toString());
+    if (currentFilters.keyword) params.set('keyword', currentFilters.keyword);
+
+    // Update URL without refreshing the page
+    const newUrl = `${pathname}${params.toString() ? '?' + params.toString() : ''}`;
+    router.push(newUrl, { scroll: false });
   };
 
   // Initial fetch
@@ -143,6 +175,7 @@ export default function PropertiesPage() {
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
     setFilters({ ...filters, page, isOffplan: false });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     fetchProperties();
   };
 
@@ -231,51 +264,29 @@ export default function PropertiesPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-12 flex justify-center">
-          <nav className="flex items-center space-x-2">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`px-4 py-2 border rounded-md ${currentPage === 1 ? 'border-gray-200 text-gray-400 cursor-not-allowed' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
-            >
-              Previous
-            </button>
-
-            {[...Array(totalPages)].map((_, index) => {
-              const page = index + 1;
-              // Show first page, last page, current page, and pages around current page
-              if (
-                page === 1 ||
-                page === totalPages ||
-                (page >= currentPage - 1 && page <= currentPage + 1)
-              ) {
-                return (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`px-4 py-2 border rounded-md ${currentPage === page ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
-                  >
-                    {page}
-                  </button>
-                );
-              } else if (
-                (page === 2 && currentPage > 3) ||
-                (page === totalPages - 1 && currentPage < totalPages - 2)
-              ) {
-                // Show ellipsis
-                return <span key={page} className="px-4 py-2 text-gray-700">...</span>;
-              }
-              return null;
-            })}
-
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`px-4 py-2 border rounded-md ${currentPage === totalPages ? 'border-gray-200 text-gray-400 cursor-not-allowed' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
-            >
-              Next
-            </button>
-          </nav>
+        <div className="mt-12">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            variant="buttons"
+            size="md"
+            baseUrl="/properties"
+            queryParams={{
+              type: filters.type || '',
+              status: filters.status || '',
+              location: filters.location || '',
+              keyword: filters.keyword || '',
+              ...(filters.minPrice && { minPrice: filters.minPrice.toString() }),
+              ...(filters.maxPrice && { maxPrice: filters.maxPrice.toString() }),
+              ...(filters.bedrooms && { bedrooms: filters.bedrooms.toString() }),
+              ...(filters.bathrooms && { bathrooms: filters.bathrooms.toString() }),
+            }}
+            showPageInfo={true}
+            totalItems={totalItems}
+            itemsPerPage={ITEMS_PER_PAGE}
+            className="mb-8"
+          />
         </div>
       )}
     </div>

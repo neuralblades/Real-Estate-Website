@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { use } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 // Auth context not needed for this component
 import { getPropertyById, Property as BaseProperty } from '@/services/propertyService';
@@ -20,6 +19,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import MapComponent from '@/components/maps/MapComponent';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import ContactFormPopup from '@/components/ContactFormPopup';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 
 // Client component wrapper
 function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
@@ -191,14 +191,13 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
       <div className="relative h-[90vh] w-full">
         {/* Background Image with Parallax Effect */}
         <div className="absolute inset-0 transform transition-transform duration-1000 ease-out">
-          <Image
-            src={property.headerImage ? getFullImageUrl(property.headerImage) :
-                 (property.images && property.images.length > 0 ? getFullImageUrl(property.images[0]) : '/images/default-property.jpg')}
+          <OptimizedImage
+            src={property.headerImage || (property.images && property.images.length > 0 ? property.images[0] : '/images/default-property.jpg')}
             alt={property.title}
             fill
             className="object-cover"
             priority
-            unoptimized
+            objectFit="cover"
           />
           {/* Modern Gradient Overlay - Enhanced for better text visibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/70 to-black/90"></div>
@@ -251,12 +250,12 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                 <div className="mb-10 flex items-center">
                   {developer.logo ? (
                     <div className="relative h-12 w-12 mr-4 rounded-full overflow-hidden border-2 border-blue-300 shadow-lg">
-                      <Image
-                        src={getFullImageUrl(developer.logo)}
+                      <OptimizedImage
+                        src={developer.logo}
                         alt={developer.name}
                         fill
                         className="object-cover"
-                        unoptimized
+                        objectFit="cover"
                       />
                     </div>
                   ) : (
@@ -537,13 +536,13 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                               setCurrentPhotoIndex(index);
                             }}
                           >
-                            <Image
-                              src={getFullImageUrl(image)}
+                            <OptimizedImage
+                              src={image}
                               alt={`Property Image ${index + 1}`}
                               fill
                               className="object-cover transition-transform duration-500 group-hover:scale-110"
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              unoptimized
+                              objectFit="cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                               <div className="p-4 w-full">
@@ -902,13 +901,12 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                         </div>
 
                         <div className="relative h-96 rounded-xl overflow-hidden shadow-lg">
-                          <Image
-                            src={property.headerImage ? getFullImageUrl(property.headerImage) :
-                                (property.images && property.images.length > 0 ? getFullImageUrl(property.images[0]) : '/images/default-property.jpg')}
+                          <OptimizedImage
+                            src={property.headerImage || (property.images && property.images.length > 0 ? property.images[0] : '/images/default-property.jpg')}
                             alt="Brochure Cover"
                             fill
                             className="object-cover"
-                            unoptimized
+                            objectFit="cover"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
                             <div className="p-6 text-white">
@@ -1101,14 +1099,14 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                 {/* Main Image */}
                 <div className="relative h-[80vh] w-full">
                   {property.images && property.images.length > 0 && (
-                    <Image
-                      src={getFullImageUrl(property.images[currentPhotoIndex])}
+                    <OptimizedImage
+                      src={property.images[currentPhotoIndex]}
                       alt={`Property Image ${currentPhotoIndex + 1}`}
                       fill
                       className="object-contain"
                       sizes="100vw"
                       priority
-                      unoptimized
+                      objectFit="contain"
                     />
                   )}
 
@@ -1150,13 +1148,13 @@ function OffplanPropertyDetailClient({ propertyId }: { propertyId: string }) {
                         onClick={() => setCurrentPhotoIndex(index)}
                         className={`relative h-16 w-24 flex-shrink-0 overflow-hidden rounded-md transition-all duration-200 ${index === currentPhotoIndex ? 'ring-2 ring-blue-500 scale-105' : 'opacity-70 hover:opacity-100'}`}
                       >
-                        <Image
-                          src={getFullImageUrl(image)}
+                        <OptimizedImage
+                          src={image}
                           alt={`Thumbnail ${index + 1}`}
                           fill
                           className="object-cover"
                           sizes="96px"
-                          unoptimized
+                          objectFit="cover"
                         />
                       </button>
                     ))}

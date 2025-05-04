@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminLayout({
@@ -33,7 +33,7 @@ export default function AdminLayout({
   if (loading || (!user && !loading)) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-600"></div>
       </div>
     );
   }
@@ -68,12 +68,13 @@ export default function AdminLayout({
           <div className="px-4 mb-6">
             <div className={`flex items-center ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}>
               <div className="relative h-10 w-10 rounded-full overflow-hidden">
-                <Image
+                <OptimizedImage
                   src="/images/admin-avatar.png"
                   alt="Admin"
                   fill
                   sizes="(max-width: 768px) 100vw, 40px"
                   className="object-cover"
+                  objectFit="cover"
                 />
               </div>
               {isSidebarOpen && (
@@ -89,7 +90,7 @@ export default function AdminLayout({
               <Link
                 href="/admin/dashboard"
                 className={`flex items-center py-3 px-4 ${
-                  pathname === '/admin/dashboard' ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname === '/admin/dashboard' ? 'bg-teal-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,7 +103,7 @@ export default function AdminLayout({
               <Link
                 href="/admin/properties"
                 className={`flex items-center py-3 px-4 ${
-                  pathname.startsWith('/admin/properties') ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname.startsWith('/admin/properties') ? 'bg-teal-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,7 +116,7 @@ export default function AdminLayout({
               <Link
                 href="/admin/developers"
                 className={`flex items-center py-3 px-4 ${
-                  pathname.startsWith('/admin/developers') ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname.startsWith('/admin/developers') ? 'bg-teal-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,7 +129,7 @@ export default function AdminLayout({
               <Link
                 href="/admin/users"
                 className={`flex items-center py-3 px-4 ${
-                  pathname.startsWith('/admin/users') ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname.startsWith('/admin/users') ? 'bg-teal-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -141,7 +142,7 @@ export default function AdminLayout({
               <Link
                 href="/admin/inquiries"
                 className={`flex items-center py-3 px-4 ${
-                  pathname === '/admin/inquiries' ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname === '/admin/inquiries' ? 'bg-teal-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,7 +155,7 @@ export default function AdminLayout({
               <Link
                 href="/admin/general-inquiries"
                 className={`flex items-center py-3 px-4 ${
-                  pathname === '/admin/general-inquiries' ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname === '/admin/general-inquiries' ? 'bg-teal-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,7 +168,7 @@ export default function AdminLayout({
               <Link
                 href="/admin/contact-submissions"
                 className={`flex items-center py-3 px-4 ${
-                  pathname === '/admin/contact-submissions' ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname === '/admin/contact-submissions' ? 'bg-teal-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -180,7 +181,7 @@ export default function AdminLayout({
               <Link
                 href="/admin/offplan-inquiries"
                 className={`flex items-center py-3 px-4 ${
-                  pathname === '/admin/offplan-inquiries' ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname === '/admin/offplan-inquiries' ? 'bg-teal-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -193,7 +194,7 @@ export default function AdminLayout({
               <Link
                 href="/admin/document-requests"
                 className={`flex items-center py-3 px-4 ${
-                  pathname === '/admin/document-requests' ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname === '/admin/document-requests' ? 'bg-teal-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,7 +207,7 @@ export default function AdminLayout({
               <Link
                 href="/admin/blog"
                 className={`flex items-center py-3 px-4 ${
-                  pathname.startsWith('/admin/blog') ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname.startsWith('/admin/blog') ? 'bg-teal-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,7 +220,7 @@ export default function AdminLayout({
               <Link
                 href="/admin/team"
                 className={`flex items-center py-3 px-4 ${
-                  pathname.startsWith('/admin/team') ? 'bg-blue-700' : 'hover:bg-gray-800'
+                  pathname.startsWith('/admin/team') ? 'bg-teal-700' : 'hover:bg-gray-800'
                 } ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -275,7 +276,7 @@ export default function AdminLayout({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
               </button>
-              <Link href="/" className="ml-4 px-4 py-2 text-sm text-blue-600 hover:text-blue-800">
+              <Link href="/" className="ml-4 px-4 py-2 text-sm text-teal-600 hover:text-teal-800">
                 View Website
               </Link>
             </div>

@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { use } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import { getDeveloperBySlug, getDeveloperPropertiesBySlug } from '@/services/developerService';
 import PropertyCard from '@/components/properties/PropertyCard';
 import Pagination from '@/components/ui/Pagination';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorDisplay from '@/components/ui/ErrorDisplay';
-import { getFullImageUrl } from '@/utils/imageUtils';
+
 
 export default function DeveloperDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
@@ -41,7 +40,7 @@ export default function DeveloperDetailPage({ params }: { params: Promise<{ slug
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (loading) return <LoadingSpinner />;
@@ -54,12 +53,13 @@ export default function DeveloperDetailPage({ params }: { params: Promise<{ slug
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           {developer.logo && (
             <div className="relative w-48 h-48 flex-shrink-0">
-              <Image
-                src={getFullImageUrl(developer.logo)}
+              <OptimizedImage
+                src={developer.logo}
                 alt={developer.name}
                 fill
                 className="object-contain"
-                unoptimized
+                objectFit="contain"
+                sizes="(max-width: 768px) 100vw, 192px"
               />
             </div>
           )}
@@ -130,6 +130,12 @@ export default function DeveloperDetailPage({ params }: { params: Promise<{ slug
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
+                variant="buttons"
+                size="md"
+                showPageInfo={true}
+                totalItems={properties.length * totalPages}
+                itemsPerPage={properties.length}
+                className="mb-8"
               />
             </div>
           )}

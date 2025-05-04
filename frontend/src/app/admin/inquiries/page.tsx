@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getAllInquiries, updateInquiryStatus } from '@/services/inquiryService';
+import Pagination from '@/components/ui/Pagination';
+import { ITEMS_PER_PAGE } from '@/config/constants';
+import Button from '@/components/ui/Button';
+import { FaSearch, FaEye, FaTimes } from 'react-icons/fa';
 
 export default function AdminInquiriesPage() {
   const [inquiries, setInquiries] = useState<any[]>([]);
@@ -14,6 +18,8 @@ export default function AdminInquiriesPage() {
   const [filteredInquiries, setFilteredInquiries] = useState<any[]>([]);
   const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchInquiries = async () => {
     setLoading(true);
@@ -57,7 +63,26 @@ export default function AdminInquiriesPage() {
     }
 
     setFilteredInquiries(filtered);
+
+    // Calculate total pages based on filtered inquiries
+    setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
+
+    // Reset to first page when filters change
+    setCurrentPage(1);
   }, [searchTerm, statusFilter, inquiries]);
+
+  // Get paginated inquiries
+  const getPaginatedInquiries = () => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return filteredInquiries.slice(startIndex, endIndex);
+  };
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleViewInquiry = (inquiry: any) => {
     setSelectedInquiry(inquiry);
@@ -88,88 +113,93 @@ export default function AdminInquiriesPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Inquiries Management</h1>
-      </div>
+    <div className="p-6">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">Inquiries Management</h1>
+        </div>
 
-      {/* Filters and Search */}
-      <div className="bg-white rounded-lg shadow-md p-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+
+        {/* Filters and Search */}
+        <div className="mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FaSearch className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search inquiries..."
+                className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Search inquiries..."
-              className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div>
-            <select
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="">All Statuses</option>
-              <option value="new">New</option>
-              <option value="in-progress">In Progress</option>
-              <option value="resolved">Resolved</option>
-            </select>
-          </div>
-          <div>
-            <button
-              onClick={() => {
-                setSearchTerm('');
-                setStatusFilter('');
-              }}
-              className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition duration-300"
-            >
-              Clear Filters
-            </button>
+            <div>
+              <select
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="">All Statuses</option>
+                <option value="new">New</option>
+                <option value="in-progress">In Progress</option>
+                <option value="resolved">Resolved</option>
+              </select>
+            </div>
+            <div>
+              <Button
+                onClick={() => {
+                  setSearchTerm('');
+                  setStatusFilter('');
+                }}
+                variant="outline"
+                className="w-full"
+              >
+                Clear Filters
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Inquiries Table */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        {/* Inquiries Table */}
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-600"></div>
           </div>
-        ) : error ? (
-          <div className="p-4 text-center text-red-600">{error}</div>
         ) : filteredInquiries.length === 0 ? (
-          <div className="p-4 text-center text-gray-500">No inquiries found</div>
+          <div className="bg-gray-100 p-6 rounded-lg text-center">
+            <p className="text-gray-600 mb-4">No inquiries found.</p>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Inquiry
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Property
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredInquiries.map((inquiry) => (
+                {getPaginatedInquiries().map((inquiry) => (
                   <tr key={inquiry.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
@@ -208,10 +238,10 @@ export default function AdminInquiriesPage() {
                       <select
                         value={inquiry.status || 'new'}
                         onChange={(e) => handleStatusChange(inquiry.id, e.target.value)}
-                        className={`text-sm border rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          inquiry.status === 'new' ? 'bg-blue-100 border-blue-300 text-blue-800' :
-                          inquiry.status === 'in-progress' ? 'bg-yellow-100 border-yellow-300 text-yellow-800' :
-                          'bg-green-100 border-green-300 text-green-800'
+                        className={`text-sm border rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500 ${
+                          inquiry.status === 'new' ? 'bg-teal-100 border-teal-300 text-teal-800' :
+                          inquiry.status === 'in-progress' ? 'bg-amber-100 border-amber-300 text-amber-800' :
+                          'bg-emerald-100 border-emerald-300 text-emerald-800'
                         }`}
                       >
                         <option value="new">New</option>
@@ -222,13 +252,16 @@ export default function AdminInquiriesPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(inquiry.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => handleViewInquiry(inquiry)}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        View Details
-                      </button>
+                    <td className="py-3 px-4">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleViewInquiry(inquiry)}
+                          className="text-teal-600 hover:text-teal-800"
+                          title="View Details"
+                        >
+                          <FaEye />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -238,19 +271,34 @@ export default function AdminInquiriesPage() {
         )}
       </div>
 
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-6">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              variant="minimal"
+              size="md"
+              showPageInfo={true}
+              totalItems={filteredInquiries.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+              className="mb-8"
+            />
+          </div>
+        )}
+
       {/* Inquiry Detail Modal */}
       {showModal && selectedInquiry && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-lg font-bold">Inquiry Details</h3>
+              <h3 className="text-xl font-bold text-gray-800">Inquiry Details</h3>
               <button
                 onClick={() => setShowModal(false)}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <FaTimes className="h-5 w-5" />
               </button>
             </div>
 
@@ -264,10 +312,10 @@ export default function AdminInquiriesPage() {
                     <select
                       value={selectedInquiry.status || 'new'}
                       onChange={(e) => handleStatusChange(selectedInquiry.id, e.target.value)}
-                      className={`mt-1 text-sm border rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        selectedInquiry.status === 'new' ? 'bg-blue-100 border-blue-300 text-blue-800' :
-                        selectedInquiry.status === 'in-progress' ? 'bg-yellow-100 border-yellow-300 text-yellow-800' :
-                        'bg-green-100 border-green-300 text-green-800'
+                      className={`mt-1 text-sm border rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500 ${
+                        selectedInquiry.status === 'new' ? 'bg-teal-100 border-teal-300 text-teal-800' :
+                        selectedInquiry.status === 'in-progress' ? 'bg-amber-100 border-amber-300 text-amber-800' :
+                        'bg-emerald-100 border-emerald-300 text-emerald-800'
                       }`}
                     >
                       <option value="new">New</option>
@@ -325,7 +373,7 @@ export default function AdminInquiriesPage() {
                     <div className="mb-4">
                       <p className="text-sm font-medium text-gray-500">Price</p>
                       <p className="mt-1 text-sm text-gray-900">
-                        ${selectedInquiry.property.price?.toLocaleString()}
+                        AED {selectedInquiry.property.price?.toLocaleString()}
                       </p>
                     </div>
                     <div className="mb-4">
@@ -335,7 +383,7 @@ export default function AdminInquiriesPage() {
                     <div className="mt-4">
                       <Link
                         href={`/properties/${selectedInquiry.property.id}`}
-                        className="text-sm text-blue-600 hover:text-blue-800"
+                        className="text-sm text-teal-600 hover:text-teal-800"
                         target="_blank"
                       >
                         View Property
@@ -359,12 +407,12 @@ export default function AdminInquiriesPage() {
             </div>
 
             <div className="mt-6 flex justify-end">
-              <button
+              <Button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                variant="outline"
               >
                 Close
-              </button>
+              </Button>
             </div>
           </div>
         </div>

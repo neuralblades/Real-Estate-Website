@@ -5,6 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getAllDocumentRequests, updateDocumentRequestStatus, deleteDocumentRequest } from '@/services/documentRequestService';
 import { formatDate } from '@/utils/dateUtils';
 import Link from 'next/link';
+import Pagination from '@/components/ui/Pagination';
+import { FaTrash } from 'react-icons/fa';
 
 interface DocumentRequest {
   id: string;
@@ -26,7 +28,7 @@ interface DocumentRequest {
 }
 
 export default function DocumentRequestsPage() {
-  const { user, token, isAdmin, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const [documentRequests, setDocumentRequests] = useState<DocumentRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,50 +39,47 @@ export default function DocumentRequestsPage() {
     status: '',
   });
 
-  // Fetch document requests
-  const fetchDocumentRequests = async () => {
-    // Get token from localStorage if not available from context
-    const localToken = token || localStorage.getItem('token');
+  // Effect to fetch data on mount and when dependencies change
+  useEffect(() => {
+    // Get token from localStorage
+    const localToken = localStorage.getItem('token');
 
-    if (!localToken) {
-      console.log('No token available, cannot fetch document requests');
-      return;
+    if (localToken) {
+      const fetchDocumentRequests = async () => {
+        setLoading(true);
+        try {
+          const response = await getAllDocumentRequests(localToken, {
+            requestType: filters.requestType ? (filters.requestType as 'brochure' | 'floorplan') : undefined,
+            status: filters.status ? (filters.status as 'pending' | 'sent' | 'completed') : undefined,
+            page: currentPage,
+            limit: 10,
+            sort: 'createdAt',
+            order: 'DESC',
+          });
+
+          if (response.success) {
+            setDocumentRequests(response.data || []);
+            setTotalPages(response.pages || 1);
+          } else {
+            setError(response.message);
+          }
+        } catch (err) {
+          console.error('Error fetching document requests:', err);
+          const errorMessage = err instanceof Error ? err.message : 'Failed to fetch document requests';
+          setError(errorMessage);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchDocumentRequests();
     }
-
-    setLoading(true);
-    try {
-      console.log('Fetching document requests with token:', localToken);
-      const response = await getAllDocumentRequests(localToken, {
-        requestType: filters.requestType as any || undefined,
-        status: filters.status as any || undefined,
-        page: currentPage,
-        limit: 10,
-        sort: 'createdAt',
-        order: 'DESC',
-      });
-
-      console.log('Document requests response:', response);
-
-      if (response.success) {
-        console.log('Document requests data:', response.data);
-        setDocumentRequests(response.data || []);
-        setTotalPages(response.pages || 1);
-      } else {
-        console.error('Error in response:', response.message);
-        setError(response.message);
-      }
-    } catch (err: any) {
-      console.error('Error fetching document requests:', err);
-      setError(err.message || 'Failed to fetch document requests');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [currentPage, filters]);
 
   // Update document request status
   const handleStatusUpdate = async (id: string, status: 'pending' | 'sent' | 'completed') => {
-    // Get token from localStorage if not available from context
-    const localToken = token || localStorage.getItem('token');
+    // Get token from localStorage
+    const localToken = localStorage.getItem('token');
 
     if (!localToken) return;
 
@@ -94,15 +93,16 @@ export default function DocumentRequestsPage() {
       } else {
         setError(response.message);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to update status');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update status';
+      setError(errorMessage);
     }
   };
 
   // Delete document request
   const handleDelete = async (id: string) => {
-    // Get token from localStorage if not available from context
-    const localToken = token || localStorage.getItem('token');
+    // Get token from localStorage
+    const localToken = localStorage.getItem('token');
 
     if (!localToken) return;
 
@@ -115,8 +115,9 @@ export default function DocumentRequestsPage() {
         } else {
           setError(response.message);
         }
-      } catch (err: any) {
-        setError(err.message || 'Failed to delete request');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to delete request';
+        setError(errorMessage);
       }
     }
   };
@@ -128,18 +129,7 @@ export default function DocumentRequestsPage() {
     setCurrentPage(1); // Reset to first page when filters change
   };
 
-  // Effect to fetch data on mount and when dependencies change
-  useEffect(() => {
-    // Get token from localStorage if not available from context
-    const localToken = token || localStorage.getItem('token');
 
-    if (localToken) {
-      console.log('Token available, fetching document requests');
-      fetchDocumentRequests();
-    } else {
-      console.log('No token available in useEffect');
-    }
-  }, [token, currentPage, filters]);
 
   // Show loading state
   if (authLoading) {
@@ -174,88 +164,89 @@ export default function DocumentRequestsPage() {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Document Requests</h1>
+    <div className="p-6">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">Document Requests</h1>
 
-        {/* Filters */}
-        <div className="flex space-x-4">
-          <div>
-            <label htmlFor="requestType" className="block text-sm font-medium text-gray-700 mb-1">
-              Request Type
-            </label>
-            <select
-              id="requestType"
-              name="requestType"
-              value={filters.requestType}
-              onChange={handleFilterChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Types</option>
-              <option value="brochure">Brochure</option>
-              <option value="floorplan">Floor Plan</option>
-            </select>
+          {/* Filters */}
+          <div className="flex space-x-4">
+            <div>
+              <label htmlFor="requestType" className="block text-sm font-medium text-gray-700 mb-1">
+                Request Type
+              </label>
+              <select
+                id="requestType"
+                name="requestType"
+                value={filters.requestType}
+                onChange={handleFilterChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+              >
+                <option value="">All Types</option>
+                <option value="brochure">Brochure</option>
+                <option value="floorplan">Floor Plan</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                id="status"
+                name="status"
+                value={filters.status}
+                onChange={handleFilterChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+              >
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="sent">Sent</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
           </div>
+        </div>
 
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <select
-              id="status"
-              name="status"
-              value={filters.status}
-              onChange={handleFilterChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="sent">Sent</option>
-              <option value="completed">Completed</option>
-            </select>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
           </div>
-        </div>
-      </div>
+        )}
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
-        </div>
-      ) : documentRequests.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-500">No document requests found.</p>
-        </div>
-      ) : (
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-600"></div>
+          </div>
+        ) : documentRequests.length === 0 ? (
+          <div className="bg-gray-100 p-6 rounded-lg text-center">
+            <p className="text-gray-600 mb-4">No document requests found.</p>
+          </div>
+        ) : (
         <>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Contact
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Property
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Type
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
                     Actions
                   </th>
                 </tr>
@@ -295,7 +286,10 @@ export default function DocumentRequestsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
                         value={request.status}
-                        onChange={(e) => handleStatusUpdate(request.id, e.target.value as any)}
+                        onChange={(e) => handleStatusUpdate(
+                          request.id,
+                          e.target.value as 'pending' | 'sent' | 'completed'
+                        )}
                         className={`text-sm font-medium rounded px-2 py-1 ${
                           request.status === 'pending'
                             ? 'bg-yellow-100 text-yellow-800'
@@ -309,13 +303,16 @@ export default function DocumentRequestsPage() {
                         <option value="completed">Completed</option>
                       </select>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => handleDelete(request.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
+                    <td className="py-3 px-4">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleDelete(request.id)}
+                          className="text-red-600 hover:text-red-800"
+                          title="Delete"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -325,38 +322,24 @@ export default function DocumentRequestsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex justify-center mt-6">
-              <nav className="flex items-center">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className={`px-3 py-1 rounded-md ${
-                    currentPage === 1
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-white text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  Previous
-                </button>
-                <div className="mx-4">
-                  Page {currentPage} of {totalPages}
-                </div>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className={`px-3 py-1 rounded-md ${
-                    currentPage === totalPages
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-white text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  Next
-                </button>
-              </nav>
+            <div className="mt-6">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => {
+                  setCurrentPage(page);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                variant="minimal"
+                size="md"
+                showPageInfo={true}
+                className="mb-8"
+              />
             </div>
           )}
         </>
       )}
+      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { getContactForms } from '@/services/contactService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import Button from '@/components/ui/Button';
 
 interface ContactForm {
   id: string;
@@ -94,12 +95,12 @@ export default function ContactSubmissionsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="p-6 bg-white rounded-lg shadow-md">
+    <div className="p-6">
+      <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Contact Form Submissions</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Contact Form Submissions</h1>
           <div className="flex space-x-2">
-            <button
+            <Button
               onClick={() => {
                 // Debug function to directly check localStorage
                 if (typeof window !== 'undefined') {
@@ -108,11 +109,12 @@ export default function ContactSubmissionsPage() {
                   alert('Check console for localStorage data');
                 }
               }}
-              className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              variant="outline"
+              size="sm"
             >
               Debug
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => {
                 // Add a test submission directly to localStorage
                 if (typeof window !== 'undefined') {
@@ -143,11 +145,12 @@ export default function ContactSubmissionsPage() {
                   alert('Test submission added. Check the table below.');
                 }
               }}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+              variant="secondary"
+              size="sm"
             >
               Add Test
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => {
                 // Clear all contact forms from localStorage
                 if (typeof window !== 'undefined' && confirm('Are you sure you want to clear all contact form submissions?')) {
@@ -156,26 +159,28 @@ export default function ContactSubmissionsPage() {
                   alert('All contact form submissions have been cleared.');
                 }
               }}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              variant="danger"
+              size="sm"
             >
               Clear All
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleRefresh}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              variant="primary"
+              size="sm"
             >
               Refresh Data
-            </button>
+            </Button>
           </div>
         </div>
 
         {loading ? (
           <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-600"></div>
           </div>
         ) : forms.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-6 text-center">
-            <p>No contact form submissions found.</p>
+          <div className="bg-gray-100 p-6 rounded-lg text-center">
+            <p className="text-gray-600 mb-4">No contact form submissions found.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -205,10 +210,10 @@ export default function ContactSubmissionsPage() {
                     <td className="py-3 px-4">
                       <span className={`px-2 py-1 rounded text-xs ${
                         form.status === 'new'
-                          ? 'bg-blue-100 text-blue-800'
+                          ? 'bg-teal-100 text-teal-800'
                           : form.status === 'in-progress'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-green-100 text-green-800'
+                          ? 'bg-amber-100 text-amber-800'
+                          : 'bg-emerald-100 text-emerald-800'
                       }`}>
                         {form.status}
                       </span>

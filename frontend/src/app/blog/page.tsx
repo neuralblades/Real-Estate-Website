@@ -1,19 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import BlogCard from '@/components/blog/BlogCard';
 import BlogSidebar from '@/components/blog/BlogSidebar';
+import Pagination from '@/components/ui/Pagination';
 import { getBlogPosts, BlogPost, BlogFilter } from '@/services/blogService';
 
 const BlogPage: React.FC = () => {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1', 10));
   const [hasMore, setHasMore] = useState(false);
   const [totalPosts, setTotalPosts] = useState(0);
 
@@ -67,70 +70,26 @@ const BlogPage: React.FC = () => {
     fetchPosts();
   }, [page, category, tag, search]);
 
-  // Generate pagination links
-  const getPaginationLinks = () => {
-    const links = [];
-    const maxVisiblePages = 5;
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
 
-    // Calculate range of visible page numbers
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    // Update URL with new page number
+    const params = new URLSearchParams();
+    params.set('page', page.toString());
+    if (category) params.set('category', category);
+    if (tag) params.set('tag', tag);
+    if (search) params.set('search', search);
 
-    // Adjust if we're near the end
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
+    // Update URL without refreshing the page
+    const newUrl = `${pathname}?${params.toString()}`;
+    router.push(newUrl, { scroll: false });
 
-    // Previous page link
-    if (currentPage > 1) {
-      links.push(
-        <Link
-          key="prev"
-          href={`/blog?page=${currentPage - 1}${category ? `&category=${encodeURIComponent(category)}` : ''}${tag ? `&tag=${encodeURIComponent(tag)}` : ''}${search ? `&search=${encodeURIComponent(search)}` : ''}`}
-          className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-        >
-          <span className="sr-only">Previous</span>
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </Link>
-      );
-    }
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Page number links
-    for (let i = startPage; i <= endPage; i++) {
-      links.push(
-        <Link
-          key={i}
-          href={`/blog?page=${i}${category ? `&category=${encodeURIComponent(category)}` : ''}${tag ? `&tag=${encodeURIComponent(tag)}` : ''}${search ? `&search=${encodeURIComponent(search)}` : ''}`}
-          className={`flex h-10 w-10 items-center justify-center rounded-md ${
-            i === currentPage
-              ? 'bg-blue-600 text-white'
-              : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-          }`}
-        >
-          {i}
-        </Link>
-      );
-    }
-
-    // Next page link
-    if (hasMore) {
-      links.push(
-        <Link
-          key="next"
-          href={`/blog?page=${currentPage + 1}${category ? `&category=${encodeURIComponent(category)}` : ''}${tag ? `&tag=${encodeURIComponent(tag)}` : ''}${search ? `&search=${encodeURIComponent(search)}` : ''}`}
-          className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-        >
-          <span className="sr-only">Next</span>
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
-      );
-    }
-
-    return links;
+    // Update current page state
+    setCurrentPage(page);
   };
 
   return (
@@ -221,10 +180,24 @@ const BlogPage: React.FC = () => {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="mt-10 flex justify-center">
-                    <div className="flex space-x-2">
-                      {getPaginationLinks()}
-                    </div>
+                  <div className="mt-10">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                      variant="links"
+                      size="md"
+                      baseUrl="/blog"
+                      queryParams={{
+                        ...(category && { category }),
+                        ...(tag && { tag }),
+                        ...(search && { search })
+                      }}
+                      showPageInfo={true}
+                      totalItems={totalPosts}
+                      itemsPerPage={9} // Matches the limit in the filter
+                      className="mb-8"
+                    />
                   </div>
                 )}
               </>

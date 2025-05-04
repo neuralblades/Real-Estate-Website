@@ -1,23 +1,28 @@
 "use client";
 import Button from '@/components/ui/Button';
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import PropertyCard from '@/components/properties/PropertyCard';
 import SearchInput from '@/components/search/SearchInput';
 import AdvancedFilters from '@/components/search/AdvancedFilters';
+import Pagination from '@/components/ui/Pagination';
 import { getProperties, PropertyFilter, Property } from '@/services/propertyService';
+import { ITEMS_PER_PAGE } from '@/config/constants';
 
 export default function OffPlanPropertiesPage() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(parseInt(searchParams.get('page') || '1', 10));
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [totalItems, setTotalItems] = useState<number>(0);
   const [filters, setFilters] = useState<PropertyFilter>({
     isOffplan: true,
-    page: 1,
+    page: parseInt(searchParams.get('page') || '1', 10),
     type: searchParams.get('type') || '',
     minPrice: searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined,
     maxPrice: searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined,
@@ -35,6 +40,10 @@ export default function OffPlanPropertiesPage() {
         setProperties(response.properties);
         setTotalPages(response.pages);
         setCurrentPage(response.page);
+        setTotalItems(response.total || response.properties.length);
+
+        // Update URL with current filters for bookmarking and sharing
+        updateUrlWithFilters(filters);
       } else {
         setProperties([]);
         setError('No off-plan properties found matching your criteria.');
@@ -45,6 +54,24 @@ export default function OffPlanPropertiesPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Update URL with current filters without page reload
+  const updateUrlWithFilters = (currentFilters: PropertyFilter) => {
+    const params = new URLSearchParams();
+
+    // Only add parameters that have values
+    if (currentFilters.page && currentFilters.page > 1) params.set('page', currentFilters.page.toString());
+    if (currentFilters.type) params.set('type', currentFilters.type);
+    if (currentFilters.location) params.set('location', currentFilters.location);
+    if (currentFilters.minPrice) params.set('minPrice', currentFilters.minPrice.toString());
+    if (currentFilters.maxPrice) params.set('maxPrice', currentFilters.maxPrice.toString());
+    if (currentFilters.bedrooms) params.set('bedrooms', currentFilters.bedrooms.toString());
+    if (currentFilters.keyword) params.set('keyword', currentFilters.keyword);
+
+    // Update URL without refreshing the page
+    const newUrl = `${pathname}${params.toString() ? '?' + params.toString() : ''}`;
+    router.push(newUrl, { scroll: false });
   };
 
   // Initial fetch
@@ -60,12 +87,16 @@ export default function OffPlanPropertiesPage() {
 
   // Handle page change
   const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
     setFilters({ ...filters, page, isOffplan: true });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    fetchProperties();
   };
 
   // Handle search
   const handleSearch = (keyword: string) => {
     setFilters({ ...filters, keyword, page: 1, isOffplan: true });
+    fetchProperties();
   };
 
   // Apply filters and fetch properties
@@ -154,44 +185,27 @@ export default function OffPlanPropertiesPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="mt-12 flex justify-center">
-            <nav className="flex items-center">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`px-3 py-1 rounded-md mr-2 ${
-                  currentPage === 1
-                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Previous
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`px-3 py-1 rounded-md mx-1 ${
-                    currentPage === page
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`px-3 py-1 rounded-md ml-2 ${
-                  currentPage === totalPages
-                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Next
-              </button>
-            </nav>
+          <div className="mt-12">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              variant="buttons"
+              size="md"
+              baseUrl="/properties/offplan"
+              queryParams={{
+                type: filters.type || '',
+                location: filters.location || '',
+                keyword: filters.keyword || '',
+                ...(filters.minPrice && { minPrice: filters.minPrice.toString() }),
+                ...(filters.maxPrice && { maxPrice: filters.maxPrice.toString() }),
+                ...(filters.bedrooms && { bedrooms: filters.bedrooms.toString() }),
+              }}
+              showPageInfo={true}
+              totalItems={totalItems}
+              itemsPerPage={ITEMS_PER_PAGE}
+              className="mb-8"
+            />
           </div>
         )}
     </div>
